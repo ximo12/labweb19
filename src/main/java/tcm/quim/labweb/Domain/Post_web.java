@@ -1,5 +1,7 @@
 package tcm.quim.labweb.Domain;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,7 +10,13 @@ import java.util.List;
 public class Post_web {
 
     private int id;
+
+    @NotNull(message = "Title cannot be null")
+    @Size(min = 4, max = 100, message = "Title must be between 4 an 100 characters long")
     private String title;
+
+    @NotNull(message = "Text cannot be null")
+    @Size(min = 4, max = 5000, message = "Title must be between 4 an 5000 characters long")
     private String text;
     private Boolean is_public;
     private LocalDateTime date_create;
@@ -17,6 +25,12 @@ public class Post_web {
     private User_web owner;
 
     private List user_share;
+
+    public Post_web() {
+        this.date_create = LocalDateTime.now();
+        this.date_edit = LocalDateTime.now();
+        this.user_share = new ArrayList<User_web>();
+    }
 
     public Post_web(String title, String text, User_web owner, Boolean is_public) {
         this.title = title;
@@ -68,6 +82,18 @@ public class Post_web {
 
     public Boolean getIs_public() {
         return is_public;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setDate_create(LocalDateTime date_create) {
+        this.date_create = date_create;
+    }
+
+    public void setDate_edit(LocalDateTime date_edit) {
+        this.date_edit = date_edit;
     }
 
     public void setIs_public(Boolean is_public) {
