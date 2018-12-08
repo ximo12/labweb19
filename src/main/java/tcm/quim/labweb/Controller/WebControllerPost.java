@@ -66,6 +66,15 @@ public class WebControllerPost {
 
 
 
+    /*
+    GET POST
+     */
+    @GetMapping("getPosts")
+    public String getAllPosts(Model model) {
+        model.addAttribute("getPosts", postRepository.getAllPosts());
+        return "getPosts";
+    }
+
 
 
 

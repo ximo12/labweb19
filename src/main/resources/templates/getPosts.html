@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>List of all Posts</title>
+</head>
+<body>
+
+<div align="center">
+
+    <h1>Posts</h1>
+
+    <div th:each="note : ${noteLabList}">
+        <h2>Title: <span th:text="${note.title}"/></h2>
+        <div th:text="${note.content}" />
+        <div th:text="${#temporals.format(note.dateCreation, 'dd-MM-yyyy HH:mm')}" />
+        <div th:text="${note.dateEdit}" />
+    </div>
+
+</div>
+
+</body>
+</html>

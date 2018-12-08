@@ -26,18 +26,15 @@ public class PostRepository {
     }
 
 
-/*
-    public List<Post_web> getAllPosts{
-        return jdbcTemplate.query(QUERY_ALL, mapper);
-    }
-*/
-
-
 
 
     public int savePost(Post_web post_web) {
         return jdbcTemplate.update(INSERT_POST, post_web.getTitle(), post_web.getText(), post_web.getIs_public(),
                 Timestamp.valueOf(post_web.getDate_create()), Timestamp.valueOf(post_web.getDate_edit()));
+    }
+
+    public List<Post_web> getAllPosts(){
+        return jdbcTemplate.query(QUERY_ALL, mapper);
     }
 
 
