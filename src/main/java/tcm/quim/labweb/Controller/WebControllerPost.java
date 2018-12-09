@@ -75,6 +75,14 @@ public class WebControllerPost {
         return "getPosts";
     }
 
+    @GetMapping("getPostById/{id}")
+    public String getPostById(Model model, @PathVariable int id) {
+        model.addAttribute("post", postRepository.getPostById(id));
+        return "getPost";
+    }
+
+
+
 
 
 

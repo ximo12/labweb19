@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>List of all Posts</title>
+</head>
+<body>
+
+        <h2>Title: <span th:text="${post.title}"/></h2>
+        <div th:text="${post.text}" />
+        <div th:text="${#temporals.format(post.date_create, 'dd-MM-yyyy HH:mm')}" />
+        <div th:text="${#temporals.format(post.date_edit, 'dd-MM-yyyy HH:mm')}" />
+
+
+</body>
+</html>
