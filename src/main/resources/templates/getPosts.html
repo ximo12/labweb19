@@ -11,11 +11,11 @@
 
     <h1>Posts</h1>
 
-    <div th:each="note : ${noteLabList}">
-        <h2>Title: <span th:text="${note.title}"/></h2>
-        <div th:text="${note.content}" />
-        <div th:text="${#temporals.format(note.dateCreation, 'dd-MM-yyyy HH:mm')}" />
-        <div th:text="${note.dateEdit}" />
+    <div th:each="Post_Web : ${postList}">
+        <h2>Title: <span th:text="${Post_Web.title}"/></h2>
+        <div th:text="${Post_Web.text}" />
+        <div th:text="${#temporals.format(Post_Web.date_create, 'dd-MM-yyyy HH:mm')}" />
+        <div th:text="${#temporals.format(Post_Web.date_edit, 'dd-MM-yyyy HH:mm')}" />
     </div>
 
 </div>
