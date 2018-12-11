@@ -11,6 +11,7 @@ import tcm.quim.labweb.Domain.Post_web;
 import tcm.quim.labweb.Repositories.PostRepository;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @Controller
 public class WebControllerPost {
@@ -33,10 +34,12 @@ public class WebControllerPost {
     }
 
     @PostMapping("newPost")
-    public String createPostWeb(@Valid Post_web post_web, Errors errors) {
+    public String createPostWeb(@Valid Post_web post_web, Errors errors, Principal principal) {
         if (errors.hasErrors()) {
             return "postForm";
         }
+
+        String name = principal.getName();
 
         postRepository.savePost(post_web);
         return "redirect:/getAllPosts";
