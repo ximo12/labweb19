@@ -15,46 +15,37 @@ CREATE TABLE user_web
 
 DROP TABLE if EXISTS post_web;
 CREATE TABLE post_web (
-  id bigint auto_increment PRIMARY KEY,
-  title VARCHAR (100) ,
-  text VARCHAR (255),
-  date_create TIMESTAMP ,
-  date_edit TIMESTAMP ,
-  public BOOLEAN,
-  owner VARCHAR (55),
-  FOREIGN KEY (owner)
-  REFERENCES user_web(mail)
+                        id bigint auto_increment PRIMARY KEY,
+                        title VARCHAR (100) ,
+                        text VARCHAR (255),
+                        date_create TIMESTAMP ,
+                        date_edit TIMESTAMP ,
+                        public BOOLEAN,
+                        owner VARCHAR (55),
+                        FOREIGN KEY (owner)
+                          REFERENCES user_web(mail)
 );
 
 DROP TABLE if EXISTS shared_post;
 CREATE TABLE shared_post (
-  id_user bigint auto_increment PRIMARY KEY,
-  title VARCHAR (100) ,
-  text VARCHAR (255),
-  date_create TIMESTAMP ,
-  date_edit TIMESTAMP ,
-  public BOOLEAN,
-  owner VARCHAR (55),
-  FOREIGN KEY (owner)
-  REFERENCES user_web(mail)
+                           id_user bigint auto_increment PRIMARY KEY,
+                           title VARCHAR (100) ,
+                           text VARCHAR (255),
+                           date_create TIMESTAMP ,
+                           date_edit TIMESTAMP ,
+                           public BOOLEAN,
+                           owner VARCHAR (55),
+                           FOREIGN KEY (owner)
+                             REFERENCES user_web(mail)
 );
 
 
 DROP TABLE if EXISTS user_roles;
 CREATE TABLE user_roles (
-  user_role_id int(11) NOT NULL AUTO_INCREMENT,
-  username varchar(45) NOT NULL,
-  role varchar(45) NOT NULL,
-  PRIMARY KEY (user_role_id),
-  UNIQUE KEY uni_username_role (role,mail),
-  CONSTRAINT fk_username FOREIGN KEY (username) REFERENCES user_web (username));
+                          user_role_id int(11) NOT NULL AUTO_INCREMENT,
+                          username varchar(45) NOT NULL,
+                          role varchar(45) NOT NULL,
+                          PRIMARY KEY (user_role_id),
+                          UNIQUE KEY uni_username_role (role,username),
+                          CONSTRAINT fk_username FOREIGN KEY (username) REFERENCES user_web (username));
 
-
-DROP TABLE if EXISTS authorities;
-CREATE TABLE authorities (
-  authority_id int(11) NOT NULL AUTO_INCREMENT,
-  username varchar(45) NOT NULL,
-  role varchar(45) NOT NULL,
-  PRIMARY KEY (authority_id),
-  UNIQUE KEY uni_username_role (role,username),
-  CONSTRAINT fk_username FOREIGN KEY (username) REFERENCES user_web (username));
