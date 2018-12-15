@@ -7,6 +7,7 @@ import tcm.quim.labweb.Domain.Post_web;
 import tcm.quim.labweb.Domain.User_web;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -19,6 +20,8 @@ public class PostRepository {
     private final String INSERT_POST = "INSERT INTO post_web (title, text, is_public, date_create, date_edit) VALUES (?, ? , ?, ?)";
     private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
     private final String QUERY_ALL   = "SELECT * FROM post_web";
+    private final ArrayList<String> QUERY_ALL_PERMIT_USER = "SELECT post_id FROM shared_post WHERE username = ?";
+
 
 
     public Post_web getPostById(int id) {
@@ -33,7 +36,10 @@ public class PostRepository {
                 Timestamp.valueOf(post_web.getDate_create()), Timestamp.valueOf(post_web.getDate_edit()));
     }
 
-    public List<Post_web> getAllPosts(){
+
+
+    public List<Post_web> getAllPosts(User_web user_web){
+        List<int> = jdbcTemplate.query(QUERY_ALL_PERMIT_USER, new Object[]{user_web.getId()});
         return jdbcTemplate.query(QUERY_ALL, mapper);
     }
 
