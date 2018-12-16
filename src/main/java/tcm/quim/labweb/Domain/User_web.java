@@ -21,6 +21,9 @@ public class User_web {
     private List post_owner;
     private List post_share;
 
+    public User_web() {
+    }
+
     public User_web(String username, String name, String surname, String mail, int phone, LocalDateTime date_birth) {
         this.username = username;
         this.name = name;

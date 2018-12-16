@@ -1,7 +1,9 @@
 package tcm.quim.labweb.Controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import tcm.quim.labweb.Domain.User_web;
 import tcm.quim.labweb.Repositories.UserRepository;
@@ -15,6 +17,16 @@ public class WebControllerUser {
     UserRepository userRepository;
 
 
+    @GetMapping("editUser")
+    public String editUserWeb(Model model, Principal principal) {
+        String name = principal.getName();
+        User_web user_web = userRepository.getUserByUserName(name);
+        model.addAttribute("User_web", user_web);
+        return "userForm";
+
+    }
+
+
     @PutMapping("editUser")
     public String editUserWeb(@Valid User_web user_web, Errors errors) {
         if (errors.hasErrors()) {
@@ -24,6 +36,29 @@ public class WebControllerUser {
         userRepository.saveUser(user_web);
         return "redirect:/userForm";
     }
+
+
+    @PutMapping("addFriend/{userId}")
+    public String addNewFriendd(Model model, Principal principal, int userId) {
+
+        User_web user_web = userRepository.getUserByUserName(principal.getName());
+
+        User_web user_web_2 = userRepository.getUserById(userId);
+
+        user_web.addFriend(user_web_2);
+
+        user_web_2.addFriend(user_web);
+
+        userRepository.saveUser(user_web);
+        userRepository.saveUser(user_web_2);
+
+        model.addAttribute("User_web", user_web);
+        return "myFriends";
+    }
+
+
+
+
 
 
 
