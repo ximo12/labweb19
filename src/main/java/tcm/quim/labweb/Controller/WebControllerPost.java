@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import tcm.quim.labweb.Domain.Post_web;
+import tcm.quim.labweb.Domain.User_web;
 import tcm.quim.labweb.Repositories.PostRepository;
+import tcm.quim.labweb.Repositories.UserRepository;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -17,6 +19,7 @@ import java.security.Principal;
 public class WebControllerPost {
 
     PostRepository postRepository;
+    UserRepository userRepository;
 
     public WebControllerPost(PostRepository postRepository) {
         this.postRepository = postRepository;
@@ -73,8 +76,10 @@ public class WebControllerPost {
     GET POST
      */
     @GetMapping("getPosts")
-    public String getAllPosts(Model model) {
-        model.addAttribute("postList", postRepository.getAllPosts());
+    public String getAllPosts(Model model, Principal principal) {
+        String name = principal.getName();
+        User_web user_web = userRepository.getUserByUserName (name);
+        model.addAttribute("postList", postRepository.getAllPosts(user_web));
         return "getPosts";
     }
 

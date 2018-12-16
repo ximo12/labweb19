@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import tcm.quim.labweb.Domain.User_web;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Repository
@@ -13,16 +14,26 @@ public class UserRepository {
     JdbcTemplate jdbcTemplate;
     UserRepository userRepository;
 
-    private final String INSERT_POST = "INSERT INTO user_web (title, text, is_public, date_create, date_edit) VALUES (?, ? , ?, ?)";
+    private final String INSERT_USER = "INSERT INTO user_web (username, name, surname, mail, phone, date_create, date_edit, date_birth) VALUES (?, ? , ?, ?, ?, ?, ?, ?)";
     private final String QUERY_BY_ID = "SELECT * FROM user_web WHERE id = ?";
+    private final String QUERY_BY_USERNAME = "SELECT * FROM user_web WHERE username = ?";
     private final String QUERY_ALL   = "SELECT * FROM user_web";
 
 
     public User_web getUserById(int idUser) {
-        return jdbcTemplate.query(QUERY_BY_ID, new Object[]{idUser}, mapper);
-
-        return null;
+        return jdbcTemplate.queryForObject(QUERY_BY_ID, new Object[]{idUser}, mapper);
     }
+
+    public User_web getUserByUserName(String name) {
+        return jdbcTemplate.queryForObject(QUERY_BY_USERNAME, new Object[]{name}, mapper);
+    }
+
+    public int saveUser(User_web user_web) {
+        return jdbcTemplate.update(INSERT_USER, user_web.getUsername(), user_web.getName(), user_web.getSurname(), user_web.getMail(),
+                user_web.getPhone(), Timestamp.valueOf(user_web.getDate_create()), Timestamp.valueOf(user_web.getDate_edit()),
+                Timestamp.valueOf(user_web.getDate_birth()));
+    }
+
 
 
     private RowMapper<User_web> mapper = (resultSet, i) -> {
