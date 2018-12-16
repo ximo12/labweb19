@@ -20,7 +20,7 @@ public class PostRepository {
     private final String INSERT_POST = "INSERT INTO post_web (title, text, is_public, date_create, date_edit) VALUES (?, ? , ?, ?)";
     private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
     private final String QUERY_ALL   = "SELECT * FROM post_web";
-    private final ArrayList<String> QUERY_ALL_PERMIT_USER = "SELECT post_id FROM shared_post WHERE username = ?";
+    private final String QUERY_ALL_PERMIT_USER = "SELECT * FROM shared_post WHERE username = ?";
 
 
 
@@ -39,8 +39,7 @@ public class PostRepository {
 
 
     public List<Post_web> getAllPosts(User_web user_web){
-        List<int> = jdbcTemplate.query(QUERY_ALL_PERMIT_USER, new Object[]{user_web.getId()});
-        return jdbcTemplate.query(QUERY_ALL, mapper);
+        return jdbcTemplate.query(QUERY_ALL_PERMIT_USER, mapper, user_web.getId());
     }
 
 
@@ -54,7 +53,6 @@ public class PostRepository {
 
         return post_web;
     };
-
 
 
 }

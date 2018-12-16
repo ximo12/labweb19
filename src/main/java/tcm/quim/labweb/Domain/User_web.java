@@ -8,6 +8,7 @@ import java.util.List;
 public class User_web {
 
     private int id;
+    private String username;
     private String name;
     private String surname;
     private String mail;
@@ -20,7 +21,8 @@ public class User_web {
     private List post_owner;
     private List post_share;
 
-    public User_web(String name, String surname, String mail, int phone, LocalDateTime date_birth) {
+    public User_web(String username, String name, String surname, String mail, int phone, LocalDateTime date_birth) {
+        this.username = username;
         this.name = name;
         this.surname = surname;
         this.mail = mail;
@@ -31,6 +33,38 @@ public class User_web {
         this.post_share = new ArrayList<Post_web>();
         this.date_create = LocalDateTime.now();
         this.date_edit = LocalDateTime.now();
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setDate_create(LocalDateTime date_create) {
+        this.date_create = date_create;
+    }
+
+    public void setDate_edit(LocalDateTime date_edit) {
+        this.date_edit = date_edit;
+    }
+
+    public void setFriends(List friends) {
+        this.friends = friends;
+    }
+
+    public void setPost_owner(List post_owner) {
+        this.post_owner = post_owner;
+    }
+
+    public void setPost_share(List post_share) {
+        this.post_share = post_share;
     }
 
     public int getId() {
