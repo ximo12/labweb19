@@ -21,5 +21,5 @@ CREATE TABLE user_roles (
   role varchar(45) NOT NULL,
   PRIMARY KEY (user_role_id),
   UNIQUE KEY uni_username_role (role,username),
-  CONSTRAINT fk_username FOREIGN KEY (username) REFERENCES user_web (username));
+  CONSTRAINT fk_username_role FOREIGN KEY (username) REFERENCES user_web (username));
 

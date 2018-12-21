@@ -20,8 +20,8 @@ CREATE TABLE shared_post (
   username varchar(45) NOT NULL,
   post_id varchar(45) NOT NULL,
   PRIMARY KEY (post_user_id),
-  UNIQUE KEY uni_username_post (post,username),
-  CONSTRAINT fk_username FOREIGN KEY (username) REFERENCES user_web (username),
+  UNIQUE KEY uni_username_post (post_id,username),
+  CONSTRAINT fk_username_shared FOREIGN KEY (username) REFERENCES user_web (username),
   CONSTRAINT fk_post FOREIGN KEY (post_id) REFERENCES post_web (id),
   );
 
