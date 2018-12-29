@@ -21,8 +21,9 @@ public class WebControllerPost {
     PostRepository postRepository;
     UserRepository userRepository;
 
-    public WebControllerPost(PostRepository postRepository) {
+    public WebControllerPost(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -78,9 +79,9 @@ public class WebControllerPost {
     @GetMapping("getPosts")
     public String getAllPosts(Model model, Principal principal) {
         String name = principal.getName();
-        User_web user_web = userRepository.getUserByUserName (name);
+        User_web user_web = userRepository.getUserByUserName ("quimmo");
         model.addAttribute("postList", postRepository.getAllPosts(user_web));
-        return "getPosts";
+       return "/getPosts";
     }
 
     @GetMapping("getPostById/{id}")

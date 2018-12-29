@@ -7,18 +7,21 @@ import tcm.quim.labweb.Domain.User_web;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Repository
 public class UserRepository {
 
     JdbcTemplate jdbcTemplate;
-    UserRepository userRepository;
 
     private final String INSERT_USER = "INSERT INTO user_web (username, name, surname, mail, phone, date_create, date_edit, date_birth) VALUES (?, ? , ?, ?, ?, ?, ?, ?)";
     private final String QUERY_BY_ID = "SELECT * FROM user_web WHERE id = ?";
     private final String QUERY_BY_USERNAME = "SELECT * FROM user_web WHERE username = ?";
     private final String QUERY_ALL   = "SELECT * FROM user_web";
 
+    public UserRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public User_web getUserById(int idUser) {
         return jdbcTemplate.queryForObject(QUERY_BY_ID, new Object[]{idUser}, mapper);
@@ -37,13 +40,18 @@ public class UserRepository {
 
 
     private RowMapper<User_web> mapper = (resultSet, i) -> {
+
+        String date_birth = resultSet.getString("date_birth");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime dateTimeBirth = LocalDateTime.parse(date_birth, formatter);
+
         User_web user_web = new User_web(resultSet.getString("username"),resultSet.getString("name"),
                 resultSet.getString("surname"), resultSet.getString("mail"), Integer.parseInt(resultSet.getString("phone")),
-                resultSet.getTimestamp("date_birth").toLocalDateTime());
+                dateTimeBirth);
 
-        user_web.setDate_create(LocalDateTime.parse(resultSet.getString("date_create")));
+        /*user_web.setDate_create(LocalDateTime.parse(resultSet.getString("date_create")));
         user_web.setDate_create(LocalDateTime.parse(resultSet.getString("date_edit")));
-        user_web.setId(Integer.parseInt(resultSet.getString("id")));
+        user_web.setId(Integer.parseInt(resultSet.getString("id")));*/
 
         return user_web;
     };

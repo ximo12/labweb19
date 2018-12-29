@@ -8,14 +8,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 import javax.sql.DataSource;
 
-@Profile("security_jdbc")
 @EnableWebSecurity
 public class JDBCSecurityConfiguration extends BaseSecurityConfiguration {
     private DataSource dataSource;
 
-    private static final String USERS_QUERY = "select username, password, enabled from user_lab where username = ?";
+    private static final String USERS_QUERY = "select username, password, enabled from user_web where username = ?";
 
-    private static final String AUTHORITIES_QUERY = "select username, role from authorities where username = ?";
+    private static final String AUTHORITIES_QUERY = "select username, role from user_roles where username = ?";
 
     @Bean
     @Override
