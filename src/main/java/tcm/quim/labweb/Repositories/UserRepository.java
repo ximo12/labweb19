@@ -3,8 +3,11 @@ package tcm.quim.labweb.Repositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import tcm.quim.labweb.Domain.Post_web;
 import tcm.quim.labweb.Domain.User_web;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,13 +44,10 @@ public class UserRepository {
 
     private RowMapper<User_web> mapper = (resultSet, i) -> {
 
-        String date_birth = resultSet.getString("date_birth");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime dateTimeBirth = LocalDateTime.parse(date_birth, formatter);
 
         User_web user_web = new User_web(resultSet.getString("username"),resultSet.getString("name"),
                 resultSet.getString("surname"), resultSet.getString("mail"), Integer.parseInt(resultSet.getString("phone")),
-                dateTimeBirth);
+                resultSet.getTimestamp("date_birth").toLocalDateTime());
 
         /*user_web.setDate_create(LocalDateTime.parse(resultSet.getString("date_create")));
         user_web.setDate_create(LocalDateTime.parse(resultSet.getString("date_edit")));
@@ -55,6 +55,7 @@ public class UserRepository {
 
         return user_web;
     };
+
 
 
 }

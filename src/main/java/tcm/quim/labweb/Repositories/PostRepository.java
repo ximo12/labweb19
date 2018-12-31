@@ -4,8 +4,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import tcm.quim.labweb.Domain.Post_web;
+import tcm.quim.labweb.Domain.Shared_Post_web;
 import tcm.quim.labweb.Domain.User_web;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +25,10 @@ public class PostRepository {
     private final String QUERY_ALL   = "SELECT * FROM post_web";
     private final String QUERY_ALL_PERMIT_USER = "SELECT * FROM shared_post WHERE username = ?";
 
-
+    public PostRepository(JdbcTemplate jdbcTemplate, UserRepository userRepository) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.userRepository = userRepository;
+    }
 
     public Post_web getPostById(int id) {
         return jdbcTemplate.queryForObject(QUERY_BY_ID, new Object[]{id}, mapper);
@@ -39,7 +45,8 @@ public class PostRepository {
 
 
     public List<Post_web> getAllPosts(User_web user_web){
-        return jdbcTemplate.query(QUERY_ALL_PERMIT_USER, mapper, user_web.getId());
+        List<Shared_Post_web> shared_post_webs = jdbcTemplate.query(QUERY_ALL_PERMIT_USER, new SharedPostWebLabMapper(), user_web.getUsername());
+
     }
 
 
@@ -48,11 +55,33 @@ public class PostRepository {
         User_web user_web = userRepository.getUserById(idUser);
         Post_web post_web = new Post_web(resultSet.getString("title"), resultSet.getString("text"),
                 user_web, resultSet.getBoolean("is_public"));
-        post_web.setDate_create(resultSet.getTimestamp("date_creation").toLocalDateTime());
-        post_web.setDate_edit(resultSet.getTimestamp("date_edit").toLocalDateTime());
+
+        //post_web.setDate_create(resultSet.getTimestamp("date_creation").toLocalDateTime());
+        //post_web.setDate_edit(resultSet.getTimestamp("date_edit").toLocalDateTime());
 
         return post_web;
     };
+
+    private RowMapper<Shared_Post_web> mapperShared = (resultSet, i) -> {
+        Shared_Post_web shared_post_web = new Shared_Post_web(resultSet.getString("username"), resultSet.getInt("post_id"));
+
+
+
+        //post_web.setDate_create(resultSet.getTimestamp("date_creation").toLocalDateTime());
+        //post_web.setDate_edit(resultSet.getTimestamp("date_edit").toLocalDateTime());
+
+        return shared_post_web;
+    };
+
+
+    private final class SharedPostWebLabMapper implements RowMapper<Shared_Post_web> {
+        @Override
+        public Shared_Post_web mapRow(ResultSet resultSet, int i) throws SQLException {
+            Shared_Post_web shared_post_web = new Shared_Post_web(resultSet.getString("username"), resultSet.getInt("post_id"));
+            return shared_post_web;
+        }
+    }
+
 
 
 }
