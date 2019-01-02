@@ -113,6 +113,10 @@ public class Post_web {
 
     }
 
+    public void setOwner(User_web owner) {
+        this.owner = owner;
+    }
+
     public void removeUser_share(User_web user_share) {
         if (this.user_share.contains(user_share)){
             this.user_share.remove(user_share);

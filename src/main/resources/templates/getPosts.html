@@ -14,6 +14,7 @@
     <div th:each="Post_Web : ${postList}">
         <h2>Title: <span th:text="${Post_Web.title}"/></h2>
         <div th:text="${Post_Web.text}" />
+        <div th:text="${Post_Web.id}" />
         <div th:text="${#temporals.format(Post_Web.date_create, 'dd-MM-yyyy HH:mm')}" />
         <div th:text="${#temporals.format(Post_Web.date_edit, 'dd-MM-yyyy HH:mm')}" />
     </div>

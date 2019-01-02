@@ -23,7 +23,9 @@ public class PostRepository {
     private final String INSERT_POST = "INSERT INTO post_web (title, text, is_public, date_create, date_edit) VALUES (?, ? , ?, ?)";
     private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
     private final String QUERY_ALL   = "SELECT * FROM post_web";
-    private final String QUERY_ALL_PERMIT_USER = "SELECT * FROM shared_post WHERE username = ?";
+    private final String QUERY_ALL_SHARED_POSTS_USER = "SELECT * FROM shared_post WHERE username = ?";
+    private final String QUERY_ALL_OWNER_POSTS_USER = "SELECT * FROM post_web WHERE owner = ?";
+
 
     public PostRepository(JdbcTemplate jdbcTemplate, UserRepository userRepository) {
         this.jdbcTemplate = jdbcTemplate;
@@ -45,12 +47,24 @@ public class PostRepository {
 
 
     public List<Post_web> getAllPosts(User_web user_web){
-        List<Shared_Post_web> shared_post_webs = jdbcTemplate.query(QUERY_ALL_PERMIT_USER, new SharedPostWebLabMapper(), user_web.getUsername());
+        List<Shared_Post_web> shared_post_webs = jdbcTemplate.query(QUERY_ALL_SHARED_POSTS_USER, new SharedPostWebLabMapper(), user_web.getUsername());
+
+        //List all Posts
         List<Post_web> post_webs = new ArrayList<>();
+
+        //Get List Share Posts
         for (Shared_Post_web shared_post_web: shared_post_webs) {
             int postId = shared_post_web.getPost_id();
             Post_web post_web = this.getPostById(postId);
             post_webs.add(post_web);
+        }
+
+        List<Post_web> posts_web_owner = jdbcTemplate.query(QUERY_ALL_OWNER_POSTS_USER, new Object[]{user_web.getUsername()}, mapper);
+
+        for (Post_web post_web:posts_web_owner) {
+            if (!post_webs.contains(post_web)){
+                post_webs.add(post_web);
+            }
         }
 
         return post_webs;
@@ -58,9 +72,11 @@ public class PostRepository {
     }
 
 
+
+
     private RowMapper<Post_web> mapper = (resultSet, i) -> {
-        //int idUser = resultSet.getInt("owner");
-        //User_web user_web = userRepository.getUserById(idUser);
+        String username = resultSet.getString("owner");
+        User_web user_web = userRepository.getUserByUserName(username);
 
         Post_web post_web = new Post_web();
         post_web.setId(Integer.parseInt(resultSet.getString("id")));
@@ -68,6 +84,8 @@ public class PostRepository {
         post_web.setText(resultSet.getString("text"));
         post_web.setDate_create(resultSet.getTimestamp("date_create").toLocalDateTime());
         post_web.setDate_create(resultSet.getTimestamp("date_edit").toLocalDateTime());
+        post_web.setIs_public(resultSet.getBoolean("is_public"));
+        post_web.setOwner(user_web);
 
 
         //post_web.setDate_create(resultSet.getTimestamp("date_creation").toLocalDateTime());
