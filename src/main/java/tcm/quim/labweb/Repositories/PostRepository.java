@@ -46,6 +46,14 @@ public class PostRepository {
 
     public List<Post_web> getAllPosts(User_web user_web){
         List<Shared_Post_web> shared_post_webs = jdbcTemplate.query(QUERY_ALL_PERMIT_USER, new SharedPostWebLabMapper(), user_web.getUsername());
+        List<Post_web> post_webs = new ArrayList<>();
+        for (Shared_Post_web shared_post_web: shared_post_webs) {
+            int postId = shared_post_web.getPost_id();
+            Post_web post_web = this.getPostById(postId);
+            post_webs.add(post_web);
+        }
+
+        return post_webs;
 
     }
 

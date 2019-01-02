@@ -79,7 +79,7 @@ public class WebControllerPost {
     @GetMapping("getPosts")
     public String getAllPosts(Model model, Principal principal) {
         String name = principal.getName();
-        User_web user_web = userRepository.getUserByUserName ("quimmo");
+        User_web user_web = userRepository.getUserByUserName (name);
         model.addAttribute("postList", postRepository.getAllPosts(user_web));
        return "/getPosts";
     }

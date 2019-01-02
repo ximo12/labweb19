@@ -32,10 +32,10 @@ CREATE TABLE post_web (
   text VARCHAR (255),
   date_create TIMESTAMP ,
   date_edit TIMESTAMP ,
-  public BOOLEAN,
+  is_public BOOLEAN,
   owner VARCHAR (55),
   FOREIGN KEY (owner)
-  REFERENCES user_web(mail)
+  REFERENCES user_web(username)
 );
 
 
