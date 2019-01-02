@@ -3,3 +3,6 @@ INSERT INTO user_web (username, name, surname, mail, phone, password, date_creat
 INSERT INTO user_roles (username, role) VALUES ('quimmo', 'ROLE_USER');
 
 INSERT INTO post_web (title, text, is_public, date_create, date_edit, owner) VALUES ('test', 'test text', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'quimmo');
+
+INSERT INTO shared_post (username, post_id) VALUES ('quimmo', 1);
+

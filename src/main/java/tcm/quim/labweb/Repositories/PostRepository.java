@@ -59,10 +59,16 @@ public class PostRepository {
 
 
     private RowMapper<Post_web> mapper = (resultSet, i) -> {
-        int idUser = resultSet.getInt("owner");
-        User_web user_web = userRepository.getUserById(idUser);
-        Post_web post_web = new Post_web(resultSet.getString("title"), resultSet.getString("text"),
-                user_web, resultSet.getBoolean("is_public"));
+        //int idUser = resultSet.getInt("owner");
+        //User_web user_web = userRepository.getUserById(idUser);
+
+        Post_web post_web = new Post_web();
+        post_web.setId(Integer.parseInt(resultSet.getString("id")));
+        post_web.setTitle(resultSet.getString("title"));
+        post_web.setText(resultSet.getString("text"));
+        post_web.setDate_create(resultSet.getTimestamp("date_create").toLocalDateTime());
+        post_web.setDate_create(resultSet.getTimestamp("date_edit").toLocalDateTime());
+
 
         //post_web.setDate_create(resultSet.getTimestamp("date_creation").toLocalDateTime());
         //post_web.setDate_edit(resultSet.getTimestamp("date_edit").toLocalDateTime());
