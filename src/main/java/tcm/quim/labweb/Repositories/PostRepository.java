@@ -22,9 +22,12 @@ public class PostRepository {
 
     private final String INSERT_POST = "INSERT INTO post_web (title, text, is_public, date_create, date_edit) VALUES (?, ? , ?, ?)";
     private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
+    private final String QUERY_BY_ID_ONLY_PUBLIC = "SELECT * FROM post_web WHERE id = ? AND is_public = ?";
     private final String QUERY_ALL   = "SELECT * FROM post_web";
     private final String QUERY_ALL_SHARED_POSTS_USER = "SELECT * FROM shared_post WHERE username = ?";
     private final String QUERY_ALL_OWNER_POSTS_USER = "SELECT * FROM post_web WHERE owner = ?";
+    private final String QUERY_ALL_POSTS_USER = "SELECT * FROM post_web WHERE owner = ? OR id = ?";
+
 
 
     public PostRepository(JdbcTemplate jdbcTemplate, UserRepository userRepository) {
@@ -48,24 +51,29 @@ public class PostRepository {
 
     public List<Post_web> getAllPosts(User_web user_web){
         List<Shared_Post_web> shared_post_webs = jdbcTemplate.query(QUERY_ALL_SHARED_POSTS_USER, new SharedPostWebLabMapper(), user_web.getUsername());
-
+        
         //List all Posts
-        List<Post_web> post_webs = new ArrayList<>();
+        List<Post_web> post_webs_shared = new ArrayList<>();
 
         //Get List Share Posts
         for (Shared_Post_web shared_post_web: shared_post_webs) {
             int postId = shared_post_web.getPost_id();
             Post_web post_web = this.getPostById(postId);
-            post_webs.add(post_web);
+            post_webs_shared.add(post_web);
         }
 
         List<Post_web> posts_web_owner = jdbcTemplate.query(QUERY_ALL_OWNER_POSTS_USER, new Object[]{user_web.getUsername()}, mapper);
 
         for (Post_web post_web:posts_web_owner) {
+            for (Post_web post_web_shared: post_webs_shared) {
+                
+            }
             if (!post_webs.contains(post_web)){
                 post_webs.add(post_web);
             }
         }
+        
+
 
         return post_webs;
 
