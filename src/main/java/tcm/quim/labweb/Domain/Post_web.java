@@ -32,14 +32,14 @@ public class Post_web {
         this.user_share = new ArrayList<User_web>();
     }
 
-    public Post_web(String title, String text, User_web owner, Boolean is_public) {
+    public Post_web(int id, @NotNull(message = "Title cannot be null") @Size(min = 4, max = 100, message = "Title must be between 4 an 100 characters long") String title, @NotNull(message = "Text cannot be null") @Size(min = 4, max = 5000, message = "Title must be between 4 an 5000 characters long") String text, Boolean is_public, LocalDateTime date_create, LocalDateTime date_edit, User_web owner) {
+        this.id = id;
         this.title = title;
         this.text = text;
+        this.is_public = is_public;
+        this.date_create = date_create;
+        this.date_edit = date_edit;
         this.owner = owner;
-        this.is_public=is_public;
-        this.date_create = LocalDateTime.now();
-        this.date_edit = LocalDateTime.now();
-        this.user_share = new ArrayList<User_web>();
     }
 
     public int getId() {

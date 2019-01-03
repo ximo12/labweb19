@@ -105,20 +105,12 @@ public class PostRepository {
         String username = resultSet.getString("owner");
         User_web user_web = userRepository.getUserByUserName(username);
 
-        Post_web post_web = new Post_web();
-        post_web.setId(Integer.parseInt(resultSet.getString("id")));
-        post_web.setTitle(resultSet.getString("title"));
-        post_web.setText(resultSet.getString("text"));
-        post_web.setDate_create(resultSet.getTimestamp("date_create").toLocalDateTime());
-        post_web.setDate_create(resultSet.getTimestamp("date_edit").toLocalDateTime());
-        post_web.setIs_public(resultSet.getBoolean("is_public"));
-        post_web.setOwner(user_web);
+        return new Post_web(resultSet.getInt("id"), resultSet.getString("title"),
+                resultSet.getString("text"), resultSet.getBoolean("is_public"),
+                resultSet.getTimestamp("date_create").toLocalDateTime(),
+                resultSet.getTimestamp("date_edit").toLocalDateTime(),
+                user_web);
 
-
-        //post_web.setDate_create(resultSet.getTimestamp("date_creation").toLocalDateTime());
-        //post_web.setDate_edit(resultSet.getTimestamp("date_edit").toLocalDateTime());
-
-        return post_web;
     };
 
     private RowMapper<Shared_Post_web> mapperShared = (resultSet, i) -> {
