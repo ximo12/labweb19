@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import tcm.quim.labweb.Domain.User_web;
 import tcm.quim.labweb.Repositories.UserRepository;
@@ -16,6 +17,10 @@ public class WebControllerUser {
 
     UserRepository userRepository;
 
+    public WebControllerUser(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
 
     @GetMapping("editUser")
     public String editUserWeb(Model model, Principal principal) {
@@ -27,14 +32,23 @@ public class WebControllerUser {
     }
 
 
-    @PutMapping("editUser")
+    @PostMapping("editUser")
     public String editUserWeb(@Valid User_web user_web, Errors errors) {
         if (errors.hasErrors()) {
             return "userForm";
         }
 
-        userRepository.saveUser(user_web);
-        return "redirect:/userForm";
+        User_web user_web1 = this.userRepository.getUserByUserName(user_web.getUsername());
+
+        if (user_web.getId() != user_web1.getId()){
+            return "userForm";
+        }
+
+        user_web.setDate_edit_To_Now();
+
+        userRepository.updateUser(user_web);
+
+        return "redirect:/editUser";
     }
 
 

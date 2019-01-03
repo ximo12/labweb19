@@ -24,7 +24,8 @@ public class User_web {
     public User_web() {
     }
 
-    public User_web(String username, String name, String surname, String mail, int phone, LocalDateTime date_birth) {
+    public User_web(int id, String username, String name, String surname, String mail, int phone, LocalDateTime date_birth) {
+        this.id = id;
         this.username = username;
         this.name = name;
         this.surname = surname;
@@ -186,4 +187,7 @@ public class User_web {
         }
     }
 
+    public void setDate_edit_To_Now() {
+        this.setDate_edit(LocalDateTime.now());
+    }
 }

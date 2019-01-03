@@ -127,6 +127,6 @@ public class Post_web {
 
 
     public void setDate_Edit_Now() {
-        this.date_edit = LocalDateTime.now();
+        this.setDate_edit(LocalDateTime.now());
     }
 }

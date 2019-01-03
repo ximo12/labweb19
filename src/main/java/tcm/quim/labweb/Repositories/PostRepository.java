@@ -99,8 +99,6 @@ public class PostRepository {
     }
 
 
-
-
     private RowMapper<Post_web> mapper = (resultSet, i) -> {
         String username = resultSet.getString("owner");
         User_web user_web = userRepository.getUserByUserName(username);
@@ -113,6 +111,7 @@ public class PostRepository {
 
     };
 
+
     private RowMapper<Shared_Post_web> mapperShared = (resultSet, i) -> {
         Shared_Post_web shared_post_web = new Shared_Post_web(resultSet.getString("username"), resultSet.getInt("post_id"));
 
@@ -123,8 +122,6 @@ public class PostRepository {
 
         return shared_post_web;
     };
-
-
 
 
     private final class SharedPostWebLabMapper implements RowMapper<Shared_Post_web> {
