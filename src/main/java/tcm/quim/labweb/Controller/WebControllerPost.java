@@ -84,6 +84,14 @@ public class WebControllerPost {
        return "/getPosts";
     }
 
+    @GetMapping("getMyPosts")
+    public String getMyPosts(Model model, Principal principal) {
+        String name = principal.getName();
+        User_web user_web = userRepository.getUserByUserName (name);
+        model.addAttribute("postList", postRepository.getMyPosts(user_web));
+        return "/getPosts";
+    }
+
     @GetMapping("getPostById/{id}")
     public String getPostById(Model model, @PathVariable int id) {
         model.addAttribute("post", postRepository.getPostById(id));

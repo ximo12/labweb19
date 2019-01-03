@@ -50,32 +50,46 @@ public class PostRepository {
 
 
     public List<Post_web> getAllPosts(User_web user_web){
+        //List SHared_Post_Web contains lists relation username-postId
         List<Shared_Post_web> shared_post_webs = jdbcTemplate.query(QUERY_ALL_SHARED_POSTS_USER, new SharedPostWebLabMapper(), user_web.getUsername());
         
         //List all Posts
-        List<Post_web> post_webs_shared = new ArrayList<>();
+        List<Post_web> post_web_total = new ArrayList<>();
 
         //Get List Share Posts
         for (Shared_Post_web shared_post_web: shared_post_webs) {
             int postId = shared_post_web.getPost_id();
             Post_web post_web = this.getPostById(postId);
-            post_webs_shared.add(post_web);
+            post_web_total.add(post_web);
         }
 
         List<Post_web> posts_web_owner = jdbcTemplate.query(QUERY_ALL_OWNER_POSTS_USER, new Object[]{user_web.getUsername()}, mapper);
 
-        for (Post_web post_web:posts_web_owner) {
-            for (Post_web post_web_shared: post_webs_shared) {
-                
+        //Compare posts shared - owner
+        for (Post_web post_web: posts_web_owner) {
+
+            if (!this.compareIfPostIsInArray(post_web_total, post_web)){
+                post_web_total.add(post_web);
             }
-            if (!post_webs.contains(post_web)){
-                post_webs.add(post_web);
-            }
+
         }
-        
 
+        return post_web_total;
 
-        return post_webs;
+    }
+
+    public List<Post_web>  getMyPosts(User_web user_web) {
+        return jdbcTemplate.query(QUERY_ALL_OWNER_POSTS_USER, new Object[]{user_web.getUsername()}, mapper);
+    }
+
+    private boolean compareIfPostIsInArray (List<Post_web> arrayPost, Post_web post){
+
+        for (Post_web post1: arrayPost) {
+                if (post1.getId() == post.getId()){
+                    return true;
+                }
+        }
+        return false;
 
     }
 
@@ -112,6 +126,8 @@ public class PostRepository {
 
         return shared_post_web;
     };
+
+
 
 
     private final class SharedPostWebLabMapper implements RowMapper<Shared_Post_web> {
