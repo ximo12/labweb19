@@ -55,22 +55,24 @@ public class WebControllerPost {
     /*
     EDIT POST_WEB
      */
-    @PutMapping("editPost/{id}")
+    @GetMapping("editPost/{id}")
     public String editPostWeb(@PathVariable String id, Model model) {
         Post_web post_web = this.postRepository.getPostById(Integer.parseInt(id));
         model.addAttribute("Post_Web", post_web);
 
-        return "postForm";
+        return "postFormEdit";
     }
 
-    @PutMapping("editPost")
+    @PostMapping("editPost/{id}")
     public String editPostWeb(@Valid Post_web post_web, Errors errors) {
         if (errors.hasErrors()) {
-            return "postForm";
+            return "postFormEdit";
         }
 
+        post_web.setDate_Edit_Now();
+
         postRepository.savePost(post_web);
-        return "redirect:/getAllPosts";
+        return "redirect:/getPosts";
     }
 
 

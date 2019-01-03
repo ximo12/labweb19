@@ -3,13 +3,13 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create New Post</title>
+    <title>Edit Post</title>
 </head>
 <body>
 
 <div align="center">
 
-    <h1>New Post</h1>
+    <h1>Edit Post</h1>
 
     <form method="POST" th:object="${Post_Web}">
         <div align = "left" class="errors" th:if="${#fields.hasErrors('*')}">
@@ -30,7 +30,7 @@
             </tr>
         </table>
 
-        <input type="submit" value="Create Post" />
+        <input type="submit" value="Save Post" />
 
     </form>
 </div>
