@@ -43,10 +43,12 @@ public class WebControllerPost {
             return "postForm";
         }
 
-        String name = principal.getName();
+        String username = principal.getName();
 
-        postRepository.savePost(post_web);
-        return "redirect:/getAllPosts";
+        User_web user_web = this.userRepository.getUserByUserName(username);
+
+        postRepository.addNewPost(post_web, user_web);
+        return "redirect:/getPosts";
     }
 
 

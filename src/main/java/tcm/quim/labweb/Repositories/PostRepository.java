@@ -20,7 +20,8 @@ public class PostRepository {
     JdbcTemplate jdbcTemplate;
     UserRepository userRepository;
 
-    private final String INSERT_POST = "INSERT INTO post_web (title, text, is_public, date_create, date_edit) VALUES (?, ? , ?, ?)";
+    private final String INSERT_POST = "INSERT INTO post_web (title, text, is_public, date_create, date_edit, owner) VALUES (?, ? , ?, ?, ?, ?)";
+    private final String SAVE_POST = "INSERT INTO post_web (title, text, is_public, date_create, date_edit) VALUES (?, ? , ?, ?, ?)";
     private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
     private final String QUERY_BY_ID_ONLY_PUBLIC = "SELECT * FROM post_web WHERE id = ? AND is_public = ?";
     private final String QUERY_ALL   = "SELECT * FROM post_web";
@@ -43,8 +44,13 @@ public class PostRepository {
 
 
     public int savePost(Post_web post_web) {
-        return jdbcTemplate.update(INSERT_POST, post_web.getTitle(), post_web.getText(), post_web.getIs_public(),
+        return jdbcTemplate.update(SAVE_POST, post_web.getTitle(), post_web.getText(), post_web.getIs_public(),
                 Timestamp.valueOf(post_web.getDate_create()), Timestamp.valueOf(post_web.getDate_edit()));
+    }
+
+    public int addNewPost(Post_web post_web, User_web owner) {
+        return jdbcTemplate.update(INSERT_POST, post_web.getTitle(), post_web.getText(), post_web.getIs_public(),
+                Timestamp.valueOf(post_web.getDate_create()), Timestamp.valueOf(post_web.getDate_edit()), owner.getUsername());
     }
 
 
