@@ -33,20 +33,22 @@ public class WebControllerUser {
 
 
     @PostMapping("editUser")
-    public String editUserWeb(@Valid User_web user_web, Errors errors) {
+    public String editUserWeb(@Valid User_web user_web, Errors errors, Principal principal) {
         if (errors.hasErrors()) {
             return "userForm";
         }
 
-        User_web user_web1 = this.userRepository.getUserByUserName(user_web.getUsername());
+        User_web user_web1 = this.userRepository.getUserByUserName(principal.getName());
 
-        if (user_web.getId() != user_web1.getId()){
-            return "userForm";
-        }
+        user_web1.setName(user_web.getName());
+        user_web1.setSurname(user_web.getSurname());
+        user_web1.setDate_birth(user_web.getDate_birth());
+        user_web1.setMail(user_web.getMail());
+        user_web1.setPhone(user_web.getPhone());
 
-        user_web.setDate_edit_To_Now();
+        user_web1.setDate_edit_To_Now();
 
-        userRepository.updateUser(user_web);
+        userRepository.updateUser(user_web1);
 
         return "redirect:/editUser";
     }

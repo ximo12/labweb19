@@ -53,7 +53,7 @@ public class UserRepository {
 
     private RowMapper<User_web> mapper = (resultSet, i) -> {
 
-        User_web user_web = new User_web(resultSet.getInt("id"), resultSet.getString("username"),resultSet.getString("name"),
+        return new User_web(resultSet.getInt("id"), resultSet.getString("username"),resultSet.getString("name"),
                 resultSet.getString("surname"), resultSet.getString("mail"), Integer.parseInt(resultSet.getString("phone")),
                 resultSet.getTimestamp("date_birth").toLocalDateTime());
 
@@ -61,7 +61,6 @@ public class UserRepository {
         user_web.setDate_create(LocalDateTime.parse(resultSet.getString("date_edit")));
         user_web.setId(Integer.parseInt(resultSet.getString("id")));*/
 
-        return user_web;
     };
 
 
