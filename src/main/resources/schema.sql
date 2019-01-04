@@ -14,6 +14,18 @@ CREATE TABLE user_web
   enabled TINYINT default 1
 );
 
+DROP TABLE if EXISTS friend_web;
+CREATE TABLE user_web
+(
+  id bigint auto_increment PRIMARY KEY,
+  username1 VARCHAR(55),
+  username2 VARCHAR(55),
+  PRIMARY KEY (id),
+  UNIQUE KEY uni_user1_user2 (username1,username2),
+  CONSTRAINT fk_username1_username2 FOREIGN KEY (username1) REFERENCES user_web (username),
+  CONSTRAINT fk_username2_username1 FOREIGN KEY (username2) REFERENCES user_web (username)
+);
+
 
 DROP TABLE if EXISTS user_roles;
 CREATE TABLE user_roles (

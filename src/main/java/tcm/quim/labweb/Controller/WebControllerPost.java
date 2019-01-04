@@ -158,13 +158,14 @@ public class WebControllerPost {
            return "redirect:/getPosts";
        }
 
+       //TODO CKECK IF USER IS MY FRIEND
+
        //Check if shared exists
        try {
            this.postRepository.getSharedPostWeb(user_web1, post_web);
        } catch (EmptyResultDataAccessException e) {
            this.postRepository.addShare(shared_post_web);
        }
-
 
         return "redirect:/getPosts";
     }

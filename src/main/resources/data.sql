@@ -17,9 +17,5 @@ INSERT INTO post_web (title, text, is_public, date_create, date_edit, owner) VAL
 
 INSERT INTO shared_post (username, post_id) VALUES ('quimmo2', 1);
 
-INSERT INTO shared_post (username, post_id) VALUES ('quimmo', 2);
-
-INSERT INTO shared_post (username, post_id) VALUES ('quimmo', 3);
-
 
 

@@ -1,5 +1,6 @@
 package tcm.quim.labweb.Controller;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -11,6 +12,7 @@ import tcm.quim.labweb.Repositories.UserRepository;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class WebControllerUser {
@@ -54,12 +56,24 @@ public class WebControllerUser {
     }
 
 
-    @PutMapping("addFriend/{userId}")
-    public String addNewFriendd(Model model, Principal principal, int userId) {
+    @GetMapping("getUsersThatImFriend")
+    public String getUsersThatImFriend(Model model, Principal principal) {
+
+        String name = principal.getName();
+        User_web user_web = userRepository.getUserByUserName (name);
+
+        //List of Users that I'm a friend
+        List<User_web> usersThatImFriend = this.userRepository.getUsersThatImFriend(user_web);
+
+        model.addAttribute("postList", postRepository.getMyPosts(user_web));
+
+        return "myFriends";
+    }
+
+    @PutMapping("addFriend")
+    public String addNewFriend(Model model, Principal principal) {
 
         User_web user_web = userRepository.getUserByUserName(principal.getName());
-
-        User_web user_web_2 = userRepository.getUserById(userId);
 
         user_web.addFriend(user_web_2);
 

@@ -24,8 +24,9 @@ public class PostRepository {
     private final String INSERT_SHARED = "INSERT INTO shared_post (username, post_id) VALUES (?, ?)";
 
     private final String SAVE_POST = "UPDATE post_web SET title = ?, text = ?, date_edit = ? WHERE id = ?";
-    private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
 
+
+    private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
     private final String QUERY_BY_ID_ONLY_PUBLIC = "SELECT * FROM post_web WHERE id = ? AND is_public = ?";
     private final String QUERY_ALL   = "SELECT * FROM post_web";
     private final String QUERY_ALL_SHARED_POSTS_USER = "SELECT * FROM shared_post WHERE username = ?";
@@ -33,6 +34,7 @@ public class PostRepository {
     private final String QUERY_ALL_POSTS_USER = "SELECT * FROM post_web WHERE owner = ? OR id = ?";
     private final String QUERY_SHARED_POST = "SELECT * FROM shared_post WHERE username = ? AND post_id = ?";
 
+    private final String DELETE_SHARED_POST = "DELETE FROM shared_post WHERE post_user_id = ?";
 
 
 
@@ -134,6 +136,10 @@ public class PostRepository {
 
     public Shared_Post_web getSharedPostWeb(User_web user_web1, Post_web post_web) {
         return jdbcTemplate.queryForObject(QUERY_SHARED_POST, new SharedPostWebLabMapper(), user_web1.getUsername(), post_web.getId());
+    }
+
+    public void deleteSharedPostWeb(Shared_Post_web shared_post_web) {
+        jdbcTemplate.update(DELETE_SHARED_POST, shared_post_web.getPost_user_id());
     }
 
 

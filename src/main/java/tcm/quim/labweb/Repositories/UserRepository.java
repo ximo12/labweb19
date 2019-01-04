@@ -3,6 +3,7 @@ package tcm.quim.labweb.Repositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import tcm.quim.labweb.Domain.Friend_web;
 import tcm.quim.labweb.Domain.Post_web;
 import tcm.quim.labweb.Domain.User_web;
 
@@ -11,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class UserRepository {
@@ -18,10 +21,14 @@ public class UserRepository {
     JdbcTemplate jdbcTemplate;
 
     private final String INSERT_USER = "INSERT INTO user_web (username, name, surname, mail, phone, date_create, date_edit, date_birth) VALUES (?, ? , ?, ?, ?, ?, ?, ?)";
+
     private final String UPDATE_USER = "UPDATE user_web SET username = ?, name = ?, surname = ?, mail = ?, phone = ?, date_edit = ?, date_birth = ? WHERE id = ?";
+
     private final String QUERY_BY_ID = "SELECT * FROM user_web WHERE id = ?";
     private final String QUERY_BY_USERNAME = "SELECT * FROM user_web WHERE username = ?";
     private final String QUERY_ALL   = "SELECT * FROM user_web";
+
+    private final String QUERY_USERS_I_AM_FRIEND = "SELECT * FROM friend_web WHERE username2 = ?";
 
     public UserRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -64,5 +71,25 @@ public class UserRepository {
     };
 
 
+    public List<User_web> getUsersThatImFriend(User_web user_web) {
+        List<Friend_web> friend_webList = jdbcTemplate.query(QUERY_USERS_I_AM_FRIEND, new FriendUserWebMapper(), user_web.getUsername());
+
+        List<User_web> usersThatImFriend = new ArrayList<>();
+
+        for (Friend_web friend_web: friend_webList) {
+            usersThatImFriend.add(this.getUserByUserName(friend_web.getUsername1()));
+        }
+
+        return usersThatImFriend;
+
+    }
+
+    private final class FriendUserWebMapper implements RowMapper<Friend_web> {
+        @Override
+        public Friend_web mapRow(ResultSet resultSet, int i) throws SQLException {
+            Friend_web friend_web = new Friend_web(resultSet.getInt("id"), resultSet.getString("username1"), resultSet.getString("username2"));
+            return friend_web;
+        }
+    }
 
 }
