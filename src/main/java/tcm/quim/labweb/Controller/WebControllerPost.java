@@ -59,7 +59,14 @@ public class WebControllerPost {
     EDIT POST_WEB
      */
     @GetMapping("editPost/{id}")
-    public String editPostWeb(@PathVariable String id, Model model) {
+    public String editPostWeb(@PathVariable String id, Model model, Principal principal) {
+        String name = principal.getName();
+        User_web user_web = userRepository.getUserByUserName (name);
+
+        if (!this.postRepository.existPostById(id)){
+            return "redirect:/getPosts";
+        }
+
         Post_web post_web = this.postRepository.getPostById(Integer.parseInt(id));
         model.addAttribute("Post_Web", post_web);
 

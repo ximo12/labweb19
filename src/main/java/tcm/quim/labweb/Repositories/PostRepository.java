@@ -27,6 +27,8 @@ public class PostRepository {
 
 
     private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
+    private final String QUERY_BY_ID_COUNT = "SELECT COUNT (*) FROM post_web WHERE id = ?";
+
     private final String QUERY_BY_ID_ONLY_PUBLIC = "SELECT * FROM post_web WHERE id = ? AND is_public = ?";
     private final String QUERY_ALL   = "SELECT * FROM post_web";
     private final String QUERY_ALL_SHARED_POSTS_USER = "SELECT * FROM shared_post WHERE username = ?";
@@ -140,6 +142,22 @@ public class PostRepository {
 
     public void deleteSharedPostWeb(Shared_Post_web shared_post_web) {
         jdbcTemplate.update(DELETE_SHARED_POST, shared_post_web.getPost_user_id());
+    }
+
+    public boolean existPostById(String id) {
+
+        int idToUse = Integer.parseInt(id);
+
+        Boolean result = false;
+
+        int count = jdbcTemplate.queryForObject(QUERY_BY_ID_COUNT, new Object[] { idToUse }, Integer.class);
+
+        if (count > 0) {
+            result = true;
+        }
+
+        return result;
+
     }
 
 
