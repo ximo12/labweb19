@@ -15,7 +15,7 @@ CREATE TABLE user_web
 );
 
 DROP TABLE if EXISTS friend_web;
-CREATE TABLE user_web
+CREATE TABLE friend_web
 (
   id bigint auto_increment PRIMARY KEY,
   username1 VARCHAR(55),

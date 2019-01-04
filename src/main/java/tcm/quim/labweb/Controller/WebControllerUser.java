@@ -7,6 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import tcm.quim.labweb.Domain.Friend_web;
 import tcm.quim.labweb.Domain.User_web;
 import tcm.quim.labweb.Repositories.UserRepository;
 
@@ -83,7 +84,43 @@ public class WebControllerUser {
         return "getFriends";
     }
 
-    
+
+    //ADD FRIEND
+    @GetMapping("addFriend")
+    public String sharePost(Model model) {
+
+        model.addAttribute("friend", new Friend_web());
+        return "friendForm";
+    }
+
+
+    @PostMapping("addFriend")
+    public String sharePost(Friend_web friend_web, Principal principal) {
+        String name = principal.getName();
+        User_web user_web = userRepository.getUserByUserName (name);
+
+        friend_web.setUsername1(user_web.getUsername());
+
+        User_web user_web1;
+
+        try {
+            user_web1 = this.userRepository.getUserByUserName(friend_web.getUsername2());
+        } catch (EmptyResultDataAccessException e) {
+            return "redirect:/getMyFriends";
+        }
+
+        try {
+            this.userRepository.getRelationFriend(user_web, user_web1);
+        } catch (EmptyResultDataAccessException e) {
+            this.userRepository.addNewFriend(user_web, user_web1);
+            return "redirect:/getMyFriends";
+        }
+
+
+        return "redirect:/getMyFriends";
+    }
+
+
 
 
 

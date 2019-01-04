@@ -21,6 +21,10 @@ public class UserRepository {
     JdbcTemplate jdbcTemplate;
 
     private final String INSERT_USER = "INSERT INTO user_web (username, name, surname, mail, phone, date_create, date_edit, date_birth) VALUES (?, ? , ?, ?, ?, ?, ?, ?)";
+    private final String INSERT_NEW_FRIEND = "INSERT INTO friend_web (username1, username2) VALUES (?, ?)";
+
+    private final String SELECT_EXIST_FRIEND = "SELECT count(*) FROM friend_web WHERE username1 ? AND username2 = ?";
+
 
     private final String UPDATE_USER = "UPDATE user_web SET username = ?, name = ?, surname = ?, mail = ?, phone = ?, date_edit = ?, date_birth = ? WHERE id = ?";
 
@@ -30,6 +34,8 @@ public class UserRepository {
 
     private final String QUERY_USERS_I_AM_FRIEND = "SELECT * FROM friend_web WHERE username2 = ?";
     private final String QUERY_MY_FRIEND = "SELECT * FROM friend_web WHERE username1 = ?";
+    private final String QUERY_RELATION_FRIEND = "SELECT * FROM friend_web WHERE username1 = ? AND username2 = ?";
+
 
 
     public UserRepository(JdbcTemplate jdbcTemplate) {
@@ -97,6 +103,19 @@ public class UserRepository {
         return myFriends;
     }
 
+    public int addNewFriend(User_web user_web, User_web user_web1) {
+
+        return jdbcTemplate.update(INSERT_NEW_FRIEND, user_web.getUsername(), user_web1.getUsername());
+
+    }
+
+    public Friend_web getRelationFriend (User_web user_web, User_web user_web1) {
+
+        return jdbcTemplate.queryForObject(QUERY_RELATION_FRIEND, new Object[] { user_web.getUsername(), user_web1.getUsername() }, mapperFriend);
+    }
+
+
+
     private final class FriendUserWebMapper implements RowMapper<Friend_web> {
         @Override
         public Friend_web mapRow(ResultSet resultSet, int i) throws SQLException {
@@ -104,5 +123,15 @@ public class UserRepository {
             return friend_web;
         }
     }
+
+    private RowMapper<Friend_web> mapperFriend = (resultSet, i) -> {
+
+        return new Friend_web(resultSet.getInt("id"), resultSet.getString("username1"),resultSet.getString("username2"));
+
+        /*user_web.setDate_create(LocalDateTime.parse(resultSet.getString("date_create")));
+        user_web.setDate_create(LocalDateTime.parse(resultSet.getString("date_edit")));
+        user_web.setId(Integer.parseInt(resultSet.getString("id")));*/
+
+    };
 
 }

@@ -18,4 +18,9 @@ INSERT INTO post_web (title, text, is_public, date_create, date_edit, owner) VAL
 INSERT INTO shared_post (username, post_id) VALUES ('quimmo2', 1);
 
 
+INSERT INTO friend_web (username1, username2) VALUES ('quimmo', 'quimmo2');
+
+
+
+
 
