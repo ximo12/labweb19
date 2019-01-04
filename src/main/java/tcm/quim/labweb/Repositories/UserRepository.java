@@ -29,6 +29,8 @@ public class UserRepository {
     private final String QUERY_ALL   = "SELECT * FROM user_web";
 
     private final String QUERY_USERS_I_AM_FRIEND = "SELECT * FROM friend_web WHERE username2 = ?";
+    private final String QUERY_MY_FRIEND = "SELECT * FROM friend_web WHERE username1 = ?";
+
 
     public UserRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -82,6 +84,17 @@ public class UserRepository {
 
         return usersThatImFriend;
 
+    }
+
+    public List<User_web> getMyFriends(User_web user_web) {
+        List<Friend_web> friend_webList = jdbcTemplate.query(QUERY_MY_FRIEND, new FriendUserWebMapper(), user_web.getUsername());
+
+        List<User_web> myFriends = new ArrayList<>();
+
+        for (Friend_web friend_web: friend_webList) {
+            myFriends.add(this.getUserByUserName(friend_web.getUsername2()));
+        }
+        return myFriends;
     }
 
     private final class FriendUserWebMapper implements RowMapper<Friend_web> {

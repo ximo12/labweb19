@@ -9,14 +9,14 @@
 
 <div align="center">
 
-    <h1>Posts</h1>
+    <h1>Friends</h1>
 
-    <div th:each="Post_Web : ${postList}">
-        <h2>Title: <span th:text="${Post_Web.title}"/></h2>
-        <div th:text="${Post_Web.text}" />
-        <div th:text="${Post_Web.id}" />
-        <div th:text="${#temporals.format(Post_Web.date_create, 'dd-MM-yyyy HH:mm')}" />
-        <div th:text="${#temporals.format(Post_Web.date_edit, 'dd-MM-yyyy HH:mm')}" />
+    <div th:each="User_Web : ${friends}">
+        <h2>Username: <span th:text="${User_Web.username}"/></h2>
+        <div th:text="${User_Web.name}" />
+        <div th:text="${User_Web.surname}" />
+        <div th:text="${User_Web.phone}" />
+        <div th:text="${#temporals.format(User_Web.date_birth, 'dd-MM-yyyy HH:mm')}" />
     </div>
 
 </div>

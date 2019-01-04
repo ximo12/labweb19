@@ -65,27 +65,25 @@ public class WebControllerUser {
         //List of Users that I'm a friend
         List<User_web> usersThatImFriend = this.userRepository.getUsersThatImFriend(user_web);
 
-        model.addAttribute("postList", postRepository.getMyPosts(user_web));
+        model.addAttribute("friends", usersThatImFriend);
 
-        return "myFriends";
+        return "getFriends";
     }
 
-    @PutMapping("addFriend")
-    public String addNewFriend(Model model, Principal principal) {
+    @GetMapping("getMyFriends")
+    public String getMyFriends(Model model, Principal principal) {
 
-        User_web user_web = userRepository.getUserByUserName(principal.getName());
+        String name = principal.getName();
+        User_web user_web = userRepository.getUserByUserName (name);
 
-        user_web.addFriend(user_web_2);
+        List<User_web> friends = this.userRepository.getMyFriends(user_web);
 
-        user_web_2.addFriend(user_web);
+        model.addAttribute("friends", friends);
 
-        userRepository.saveUser(user_web);
-        userRepository.saveUser(user_web_2);
-
-        model.addAttribute("User_web", user_web);
-        return "myFriends";
+        return "getFriends";
     }
 
+    
 
 
 
