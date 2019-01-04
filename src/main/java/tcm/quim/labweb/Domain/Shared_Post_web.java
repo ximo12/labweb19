@@ -18,6 +18,8 @@ public class Shared_Post_web {
         this.post_id = post_id;
     }
 
+    public Shared_Post_web() {
+    }
 
     public int getPost_user_id() {
         return post_user_id;

@@ -21,13 +21,18 @@ public class PostRepository {
     UserRepository userRepository;
 
     private final String INSERT_POST = "INSERT INTO post_web (title, text, is_public, date_create, date_edit, owner) VALUES (?, ? , ?, ?, ?, ?)";
+    private final String INSERT_SHARED = "INSERT INTO shared_post (username, post_id) VALUES (?, ?)";
+
     private final String SAVE_POST = "UPDATE post_web SET title = ?, text = ?, date_edit = ? WHERE id = ?";
     private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
+
     private final String QUERY_BY_ID_ONLY_PUBLIC = "SELECT * FROM post_web WHERE id = ? AND is_public = ?";
     private final String QUERY_ALL   = "SELECT * FROM post_web";
     private final String QUERY_ALL_SHARED_POSTS_USER = "SELECT * FROM shared_post WHERE username = ?";
     private final String QUERY_ALL_OWNER_POSTS_USER = "SELECT * FROM post_web WHERE owner = ?";
     private final String QUERY_ALL_POSTS_USER = "SELECT * FROM post_web WHERE owner = ? OR id = ?";
+    private final String QUERY_SHARED_POST = "SELECT * FROM shared_post WHERE username = ? AND post_id = ?";
+
 
 
 
@@ -122,6 +127,14 @@ public class PostRepository {
 
         return shared_post_web;
     };
+
+    public int addShare(Shared_Post_web shared_post_web) {
+        return jdbcTemplate.update(INSERT_SHARED, shared_post_web.getUsername(), shared_post_web.getPost_id());
+    }
+
+    public Shared_Post_web getSharedPostWeb(User_web user_web1, Post_web post_web) {
+        return jdbcTemplate.queryForObject(QUERY_SHARED_POST, new SharedPostWebLabMapper(), user_web1.getUsername(), post_web.getId());
+    }
 
 
     private final class SharedPostWebLabMapper implements RowMapper<Shared_Post_web> {
