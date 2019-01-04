@@ -35,6 +35,8 @@ public class UserRepository {
     private final String QUERY_USERS_I_AM_FRIEND = "SELECT * FROM friend_web WHERE username2 = ?";
     private final String QUERY_MY_FRIEND = "SELECT * FROM friend_web WHERE username1 = ?";
     private final String QUERY_RELATION_FRIEND = "SELECT * FROM friend_web WHERE username1 = ? AND username2 = ?";
+    private final String QUERY_RELATION_FRIEND_EXIST = "SELECT COUNT (*) FROM friend_web WHERE username1 = ? AND username2 = ?";
+
 
 
 
@@ -112,6 +114,19 @@ public class UserRepository {
     public Friend_web getRelationFriend (User_web user_web, User_web user_web1) {
 
         return jdbcTemplate.queryForObject(QUERY_RELATION_FRIEND, new Object[] { user_web.getUsername(), user_web1.getUsername() }, mapperFriend);
+    }
+
+    public Boolean existRelationFriend (User_web user_web, User_web user_web1){
+
+        Boolean result = false;
+
+        int count = jdbcTemplate.queryForObject(QUERY_RELATION_FRIEND_EXIST, new Object[] { user_web.getUsername(), user_web1.getUsername() }, Integer.class);
+
+        if (count > 0) {
+            result = true;
+        }
+
+        return result;
     }
 
 

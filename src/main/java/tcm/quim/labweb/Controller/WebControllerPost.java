@@ -1,5 +1,6 @@
 package tcm.quim.labweb.Controller;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import tcm.quim.labweb.Domain.Friend_web;
 import tcm.quim.labweb.Domain.Post_web;
 import tcm.quim.labweb.Domain.Shared_Post_web;
 import tcm.quim.labweb.Domain.User_web;
@@ -17,6 +19,7 @@ import tcm.quim.labweb.Repositories.UserRepository;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class WebControllerPost {
@@ -68,9 +71,32 @@ public class WebControllerPost {
         }
 
         Post_web post_web = this.postRepository.getPostById(Integer.parseInt(id));
+
+        User_web user_web_owner = post_web.getOwner();
+
+        if (!user_web.getUsername().equals(user_web_owner.getUsername())){
+            if (!this.userCanEdit(user_web, user_web_owner, post_web)){
+                return "redirect:/error";
+            }
+        }
+
         model.addAttribute("Post_Web", post_web);
 
         return "postFormEdit";
+    }
+
+    private Boolean userCanEdit (User_web user_web, User_web user_web_owner, Post_web post_web){
+
+        if (!this.userRepository.existRelationFriend(user_web_owner, user_web)){
+            return false;
+        }
+
+        if (!this.postRepository.existPostShared(user_web, post_web)){
+            return false;
+        }
+
+        return true;
+
     }
 
     @PostMapping("editPost/{id}")

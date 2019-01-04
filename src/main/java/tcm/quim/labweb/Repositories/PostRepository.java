@@ -28,6 +28,8 @@ public class PostRepository {
 
     private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
     private final String QUERY_BY_ID_COUNT = "SELECT COUNT (*) FROM post_web WHERE id = ?";
+    private final String QUERY_SHARED_EXIST = "SELECT COUNT (*) FROM shared_post WHERE username = ? AND post_id = ?";
+
 
     private final String QUERY_BY_ID_ONLY_PUBLIC = "SELECT * FROM post_web WHERE id = ? AND is_public = ?";
     private final String QUERY_ALL   = "SELECT * FROM post_web";
@@ -37,6 +39,7 @@ public class PostRepository {
     private final String QUERY_SHARED_POST = "SELECT * FROM shared_post WHERE username = ? AND post_id = ?";
 
     private final String DELETE_SHARED_POST = "DELETE FROM shared_post WHERE post_user_id = ?";
+
 
 
 
@@ -158,6 +161,18 @@ public class PostRepository {
 
         return result;
 
+    }
+
+    public boolean existPostShared(User_web user_web, Post_web post_web) {
+        Boolean result = false;
+
+        int count = jdbcTemplate.queryForObject(QUERY_SHARED_EXIST, new Object[] { user_web.getUsername(), post_web.getId() }, Integer.class);
+
+        if (count > 0) {
+            result = true;
+        }
+
+        return result;
     }
 
 
