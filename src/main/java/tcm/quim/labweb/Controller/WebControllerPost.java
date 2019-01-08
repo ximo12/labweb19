@@ -7,7 +7,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import tcm.quim.labweb.Domain.Friend_web;
 import tcm.quim.labweb.Domain.Post_web;
 import tcm.quim.labweb.Domain.Shared_Post_web;
 import tcm.quim.labweb.Domain.User_web;
@@ -211,7 +210,6 @@ public class WebControllerPost {
             return "redirect:/getPosts";
         }
 
-
         //user is owner?
         if (!post_web.getOwner().getUsername().equals(user_web.getUsername())){
             return "redirect:/getPosts";
@@ -224,14 +222,16 @@ public class WebControllerPost {
            return "redirect:/getPosts";
        }
 
-       //TODO CKECK IF USER IS MY FRIEND
-
-       //Check if shared exists
-       try {
-           this.postRepository.getSharedPostWeb(user_web1, post_web);
-       } catch (EmptyResultDataAccessException e) {
-           this.postRepository.addShare(shared_post_web);
+       if (!this.userRepository.existRelationFriend(user_web, user_web1)){
+           return "error";
        }
+
+       if (this.postRepository.existPostShared(user_web1, post_web)){
+           return "redirect:/getPosts";
+       }
+
+       this.postRepository.addShare(shared_post_web);
+
 
         return "redirect:/getPosts";
     }

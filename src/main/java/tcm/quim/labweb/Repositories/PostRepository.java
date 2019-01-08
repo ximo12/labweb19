@@ -31,11 +31,8 @@ public class PostRepository {
     private final String QUERY_SHARED_EXIST = "SELECT COUNT (*) FROM shared_post WHERE username = ? AND post_id = ?";
 
 
-    private final String QUERY_BY_ID_ONLY_PUBLIC = "SELECT * FROM post_web WHERE id = ? AND is_public = ?";
-    private final String QUERY_ALL   = "SELECT * FROM post_web";
     private final String QUERY_ALL_SHARED_POSTS_USER = "SELECT * FROM shared_post WHERE username = ?";
     private final String QUERY_ALL_OWNER_POSTS_USER = "SELECT * FROM post_web WHERE owner = ?";
-    private final String QUERY_ALL_POSTS_USER = "SELECT * FROM post_web WHERE owner = ? OR id = ?";
     private final String QUERY_SHARED_POST = "SELECT * FROM shared_post WHERE username = ? AND post_id = ?";
 
     private final String DELETE_SHARED_POST = "DELETE FROM shared_post WHERE post_user_id = ?";
@@ -83,50 +80,10 @@ public class PostRepository {
     }
 
 
-
-    public List<Post_web> getAllPosts(User_web user_web){
-        //List SHared_Post_Web contains lists relation username-postId
-        List<Shared_Post_web> shared_post_webs = jdbcTemplate.query(QUERY_ALL_SHARED_POSTS_USER, new SharedPostWebLabMapper(), user_web.getUsername());
-        
-        //List all Posts
-        List<Post_web> post_web_total = new ArrayList<>();
-
-        //Get List Share Posts
-        for (Shared_Post_web shared_post_web: shared_post_webs) {
-            int postId = shared_post_web.getPost_id();
-            Post_web post_web = this.getPostById(postId);
-            post_web_total.add(post_web);
-        }
-
-        List<Post_web> posts_web_owner = jdbcTemplate.query(QUERY_ALL_OWNER_POSTS_USER, new Object[]{user_web.getUsername()}, mapper);
-
-        //Compare posts shared - owner
-        for (Post_web post_web: posts_web_owner) {
-
-            if (!this.compareIfPostIsInArray(post_web_total, post_web)){
-                post_web_total.add(post_web);
-            }
-
-        }
-
-        return post_web_total;
-
-    }
-
     public List<Post_web>  getMyPosts(User_web user_web) {
         return jdbcTemplate.query(QUERY_ALL_OWNER_POSTS_USER, new Object[]{user_web.getUsername()}, mapper);
     }
 
-    private boolean compareIfPostIsInArray (List<Post_web> arrayPost, Post_web post){
-
-        for (Post_web post1: arrayPost) {
-                if (post1.getId() == post.getId()){
-                    return true;
-                }
-        }
-        return false;
-
-    }
 
 
     private RowMapper<Post_web> mapper = (resultSet, i) -> {
@@ -141,17 +98,6 @@ public class PostRepository {
 
     };
 
-
-    private RowMapper<Shared_Post_web> mapperShared = (resultSet, i) -> {
-        Shared_Post_web shared_post_web = new Shared_Post_web(resultSet.getString("username"), resultSet.getInt("post_id"));
-
-
-
-        //post_web.setDate_create(resultSet.getTimestamp("date_creation").toLocalDateTime());
-        //post_web.setDate_edit(resultSet.getTimestamp("date_edit").toLocalDateTime());
-
-        return shared_post_web;
-    };
 
     public int addShare(Shared_Post_web shared_post_web) {
         return jdbcTemplate.update(INSERT_SHARED, shared_post_web.getUsername(), shared_post_web.getPost_id());
