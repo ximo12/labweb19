@@ -134,8 +134,7 @@ public class UserRepository {
     private final class FriendUserWebMapper implements RowMapper<Friend_web> {
         @Override
         public Friend_web mapRow(ResultSet resultSet, int i) throws SQLException {
-            Friend_web friend_web = new Friend_web(resultSet.getInt("id"), resultSet.getString("username1"), resultSet.getString("username2"));
-            return friend_web;
+            return new Friend_web(resultSet.getInt("id"), resultSet.getString("username1"), resultSet.getString("username2"));
         }
     }
 

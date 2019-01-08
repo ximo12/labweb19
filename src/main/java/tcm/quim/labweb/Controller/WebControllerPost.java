@@ -1,15 +1,12 @@
 package tcm.quim.labweb.Controller;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import tcm.quim.labweb.Domain.Friend_web;
 import tcm.quim.labweb.Domain.Post_web;
 import tcm.quim.labweb.Domain.Shared_Post_web;
@@ -120,9 +117,45 @@ public class WebControllerPost {
     public String getAllPosts(Model model, Principal principal) {
         String name = principal.getName();
         User_web user_web = userRepository.getUserByUserName (name);
-        model.addAttribute("postList", postRepository.getAllPosts(user_web));
+
+        List<Post_web> post_webList = postRepository.getAllPostsSharedWithUser(user_web);
+
+        List<Post_web> post_web_OwnerList = postRepository.getMyPosts(user_web);
+
+        for (Post_web post_web: post_web_OwnerList) {
+            if (!this.compareIfPostIsInArray(post_webList, post_web)){
+                post_webList.add(post_web);
+            }
+        }
+
+        List<User_web> friend_webList = userRepository.getUsersThatImFriend(user_web);
+
+        for (User_web user_web1: friend_webList) {
+            List<Post_web> post_webList1 = postRepository.getMyPosts(user_web1);
+
+            for (Post_web post_web2: post_webList1) {
+                if (!this.compareIfPostIsInArray(post_webList, post_web2)){
+                    post_webList.add(post_web2);
+                }
+            }
+
+        }
+
+        model.addAttribute("postList", post_webList);
        return "/getPosts";
     }
+
+    private boolean compareIfPostIsInArray(List<Post_web> post_webList, Post_web post_web) {
+
+        for (Post_web post1: post_webList) {
+            if (post1.getId() == post_web.getId()){
+                return true;
+            }
+        }
+        return false;
+
+    }
+
 
     @GetMapping("getMyPosts")
     public String getMyPosts(Model model, Principal principal) {
