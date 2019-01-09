@@ -19,6 +19,11 @@
         <div th:text="${#temporals.format(Post_Web.date_edit, 'dd-MM-yyyy HH:mm')}" />
     </div>
 
+    <form action="/newPost">
+        <input type="submit" value="Create New Post" />
+    </form>
+
+
 </div>
 
 </body>

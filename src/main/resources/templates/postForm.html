@@ -11,7 +11,7 @@
 
     <h1>New Post</h1>
 
-    <form method="POST" th:object="${Post_Web}">
+    <form method="POST" th:object="${Post_web}">
         <div align = "left" class="errors" th:if="${#fields.hasErrors('*')}">
             <ul>
                 <li th:each="err : ${#fields.errors('*')}"

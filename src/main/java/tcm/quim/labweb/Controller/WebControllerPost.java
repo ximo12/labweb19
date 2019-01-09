@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import tcm.quim.labweb.Domain.Post_web;
 import tcm.quim.labweb.Domain.Shared_Post_web;
 import tcm.quim.labweb.Domain.User_web;
+import tcm.quim.labweb.Exception.Exception_Post_Web;
 import tcm.quim.labweb.Repositories.PostRepository;
 import tcm.quim.labweb.Repositories.UserRepository;
 
@@ -45,12 +46,15 @@ public class WebControllerPost {
             return "postForm";
         }
 
+        throw new Exception_Post_Web("test error");
+/*
         String username = principal.getName();
 
         User_web user_web = this.userRepository.getUserByUserName(username);
 
         postRepository.addNewPost(post_web, user_web);
         return "redirect:/getPosts";
+        */
     }
 
 

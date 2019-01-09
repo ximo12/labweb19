@@ -1,13 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
 </head>
 <body>
-<h1> This is our first static page called index.html</h1>
-<button href="/getPosts" type="button">View My Posts</button>
-<button type="button">View all Posts</button>
-<button type="button">View My Friends</button>
+<h1> Hello <span th:text="${User_web.name}"/></h1>
+<h3> This is index page</h3>
+
+<a>Choose an option</a>
+
+<form action="/getPosts">
+    <input type="submit" value="View All Posts" />
+</form>
+
+<form action="/getMyPosts">
+    <input type="submit" value="View My Posts" />
+</form>
+
+<form action="/getMyFriends">
+    <input type="submit" value="View My Friends" />
+</form>
+
+<form action="/getUsersThatImFriend">
+    <input type="submit" value="View Users That I'm Friend" />
+</form>
+
 </body>
 </html>
