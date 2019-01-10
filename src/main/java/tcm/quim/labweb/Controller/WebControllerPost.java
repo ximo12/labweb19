@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import tcm.quim.labweb.Domain.Post_web;
 import tcm.quim.labweb.Domain.Shared_Post_web;
 import tcm.quim.labweb.Domain.User_web;
-import tcm.quim.labweb.Exception.Exception_Post_Web;
+import tcm.quim.labweb.Exception.Exception_General;
 import tcm.quim.labweb.Repositories.PostRepository;
 import tcm.quim.labweb.Repositories.UserRepository;
 
@@ -35,26 +35,31 @@ public class WebControllerPost {
      */
     @GetMapping("newPost")
     public String newPostWeb(Model model) {
-        model.addAttribute("Post_web", new Post_web());
-        return "postForm";
+        try{
+            model.addAttribute("Post_web", new Post_web());
+            return "postForm";
+        }catch (Exception e){
+            throw new Exception_General("Error creating new Post: " + e);
+        }
 
     }
 
     @PostMapping("newPost")
     public String createPostWeb(@Valid Post_web post_web, Errors errors, Principal principal) {
-        if (errors.hasErrors()) {
-            return "postForm";
+        try{
+            if (errors.hasErrors()) {
+                return "postForm";
+            }
+
+            String username = principal.getName();
+
+            User_web user_web = this.userRepository.getUserByUserName(username);
+
+            postRepository.addNewPost(post_web, user_web);
+            return "redirect:/getPosts";
+        }catch (Exception e){
+            throw new Exception_General("Error creating New post: " + e);
         }
-
-        throw new Exception_Post_Web("test error");
-/*
-        String username = principal.getName();
-
-        User_web user_web = this.userRepository.getUserByUserName(username);
-
-        postRepository.addNewPost(post_web, user_web);
-        return "redirect:/getPosts";
-        */
     }
 
 
@@ -63,26 +68,31 @@ public class WebControllerPost {
      */
     @GetMapping("editPost/{id}")
     public String editPostWeb(@PathVariable String id, Model model, Principal principal) {
-        String name = principal.getName();
-        User_web user_web = userRepository.getUserByUserName (name);
+        try{
+            String name = principal.getName();
+            User_web user_web = userRepository.getUserByUserName (name);
 
-        if (!this.postRepository.existPostById(id)){
-            return "redirect:/getPosts";
-        }
-
-        Post_web post_web = this.postRepository.getPostById(Integer.parseInt(id));
-
-        User_web user_web_owner = post_web.getOwner();
-
-        if (!user_web.getUsername().equals(user_web_owner.getUsername())){
-            if (!this.userCanEdit(user_web, user_web_owner, post_web)){
-                return "redirect:/error";
+            if (!this.postRepository.existPostById(id)){
+                return "redirect:/getPosts";
             }
+
+            Post_web post_web = this.postRepository.getPostById(Integer.parseInt(id));
+
+            User_web user_web_owner = post_web.getOwner();
+
+            if (!user_web.getUsername().equals(user_web_owner.getUsername())){
+                if (!this.userCanEdit(user_web, user_web_owner, post_web)){
+                    return "redirect:/error";
+                }
+            }
+
+            model.addAttribute("Post_Web", post_web);
+
+            return "postFormEdit";
+        }catch (Exception e){
+            throw new Exception_General("Error Editing post: " + e);
         }
 
-        model.addAttribute("Post_Web", post_web);
-
-        return "postFormEdit";
     }
 
     private Boolean userCanEdit (User_web user_web, User_web user_web_owner, Post_web post_web){

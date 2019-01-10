@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import tcm.quim.labweb.Exception.Exception_Post_Web;
+import tcm.quim.labweb.Exception.Exception_General;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,7 +14,7 @@ public class ExceptionHandlingController {
 
     private static final Logger logger = LoggerFactory.getLogger(ExceptionHandlingController.class);
 
-    @ExceptionHandler({Exception_Post_Web.class})
+    @ExceptionHandler({Exception_General.class})
     public String errorInPostWeb(Model model, HttpServletRequest request, Exception ex) {
         String url = request.getRequestURL().toString();
 
