@@ -67,22 +67,22 @@ public class WebControllerPost {
     EDIT POST_WEB
      */
     @GetMapping("editPost/{id}")
-    public String editPostWeb(@PathVariable String id, Model model, Principal principal) {
+    public String editPostWeb(@PathVariable int id, Model model, Principal principal) {
         try{
             String name = principal.getName();
             User_web user_web = userRepository.getUserByUserName (name);
 
             if (!this.postRepository.existPostById(id)){
-                return "redirect:/getPosts";
+                throw new Exception_General("Post Id not Exist");
             }
 
-            Post_web post_web = this.postRepository.getPostById(Integer.parseInt(id));
+            Post_web post_web = this.postRepository.getPostById(id);
 
             User_web user_web_owner = post_web.getOwner();
 
             if (!user_web.getUsername().equals(user_web_owner.getUsername())){
                 if (!this.userCanEdit(user_web, user_web_owner, post_web)){
-                    return "redirect:/error";
+                    throw new Exception_General("You can't edit Post");
                 }
             }
 
@@ -111,15 +111,19 @@ public class WebControllerPost {
 
     @PostMapping("editPost/{id}")
     public String editPostWeb(@Valid Post_web post_web, Errors errors) {
-        if (errors.hasErrors()) {
-            return "postFormEdit";
+        try {
+            if (errors.hasErrors()) {
+                return "postFormEdit";
+            }
+
+            post_web.setDate_Edit_Now();
+
+            postRepository.savePost(post_web);
+            return "redirect:/getPosts";
+        }catch (Exception e){
+            throw new Exception_General("Error Editing post: " + e);
         }
-
-        post_web.setDate_Edit_Now();
-
-        postRepository.savePost(post_web);
-        return "redirect:/getPosts";
-    }
+            }
 
 
 
@@ -128,34 +132,39 @@ public class WebControllerPost {
      */
     @GetMapping("getPosts")
     public String getAllPosts(Model model, Principal principal) {
-        String name = principal.getName();
-        User_web user_web = userRepository.getUserByUserName (name);
+        try {
+            String name = principal.getName();
+            User_web user_web = userRepository.getUserByUserName (name);
 
-        List<Post_web> post_webList = postRepository.getAllPostsSharedWithUser(user_web);
+            List<Post_web> post_webList = postRepository.getAllPostsSharedWithUser(user_web);
 
-        List<Post_web> post_web_OwnerList = postRepository.getMyPosts(user_web);
+            List<Post_web> post_web_OwnerList = postRepository.getMyPosts(user_web);
 
-        for (Post_web post_web: post_web_OwnerList) {
-            if (!this.compareIfPostIsInArray(post_webList, post_web)){
-                post_webList.add(post_web);
-            }
-        }
-
-        List<User_web> friend_webList = userRepository.getUsersThatImFriend(user_web);
-
-        for (User_web user_web1: friend_webList) {
-            List<Post_web> post_webList1 = postRepository.getMyPosts(user_web1);
-
-            for (Post_web post_web2: post_webList1) {
-                if (!this.compareIfPostIsInArray(post_webList, post_web2)){
-                    post_webList.add(post_web2);
+            for (Post_web post_web: post_web_OwnerList) {
+                if (!this.compareIfPostIsInArray(post_webList, post_web)){
+                    post_webList.add(post_web);
                 }
             }
 
+            List<User_web> friend_webList = userRepository.getUsersThatImFriend(user_web);
+
+            for (User_web user_web1: friend_webList) {
+                List<Post_web> post_webList1 = postRepository.getMyPosts(user_web1);
+
+                for (Post_web post_web2: post_webList1) {
+                    if (!this.compareIfPostIsInArray(post_webList, post_web2)){
+                        post_webList.add(post_web2);
+                    }
+                }
+
+            }
+
+            model.addAttribute("postList", post_webList);
+            return "/getPosts";
+        } catch (Exception e){
+            throw new Exception_General("Error Getting Posts: " + e);
         }
 
-        model.addAttribute("postList", post_webList);
-       return "/getPosts";
     }
 
     private boolean compareIfPostIsInArray(List<Post_web> post_webList, Post_web post_web) {
@@ -172,31 +181,39 @@ public class WebControllerPost {
 
     @GetMapping("getMyPosts")
     public String getMyPosts(Model model, Principal principal) {
-        String name = principal.getName();
-        User_web user_web = userRepository.getUserByUserName (name);
-        model.addAttribute("postList", postRepository.getMyPosts(user_web));
-        return "/getPosts";
+        try{
+            String name = principal.getName();
+            User_web user_web = userRepository.getUserByUserName (name);
+            model.addAttribute("postList", postRepository.getMyPosts(user_web));
+            return "/getPosts";
+        }catch (Exception e){
+            throw new Exception_General("Error Getting Posts:  " + e);
+        }
     }
 
     @GetMapping("getPostById/{id}")
     public String getPostById(Model model, @PathVariable int id, Principal principal) {
-        String name = principal.getName();
-        User_web user_web = userRepository.getUserByUserName (name);
+        try{
+            String name = principal.getName();
+            User_web user_web = userRepository.getUserByUserName (name);
 
-        Post_web post_web;
+            if(!this.postRepository.existPostById(id)){
+                throw new Exception_General("Id Post no Exist");
+            }
 
-        try {
-            post_web = postRepository.getPostById(id);
-        } catch (EmptyResultDataAccessException e) {
-            return "redirect:/getPosts";
+            Post_web post_web = this.postRepository.getPostById(id);
+
+            if (!post_web.getOwner().getUsername().equals(user_web.getUsername())){
+                if (!this.userRepository.existRelationFriend(post_web.getOwner(), user_web)){
+                    throw new Exception_General("User can view this Post");
+                }
+            }
+
+            model.addAttribute("post", postRepository.getPostById(id));
+            return "getPost";
+        }catch (Exception e){
+            throw new Exception_General("Error Getting Posts: ");
         }
-
-        if (!post_web.getOwner().getUsername().equals(user_web.getUsername())){
-            return "redirect:/getPosts";
-        }
-
-        model.addAttribute("post", postRepository.getPostById(id));
-        return "getPost";
     }
 
 
@@ -204,50 +221,54 @@ public class WebControllerPost {
     //SHARE POSTS
     @GetMapping("sharePost")
     public String sharePost(Model model) {
-
-        model.addAttribute("post_share", new Shared_Post_web());
-        return "postShareForm";
+        try{
+            model.addAttribute("post_share", new Shared_Post_web());
+            return "postShareForm";
+        }catch (Exception e){
+            throw new Exception_General("Error Sharing Posts: " + e);
+        }
     }
 
 
    @PostMapping("sharePost")
     public String sharePost(Shared_Post_web shared_post_web, Principal principal) {
-        String name = principal.getName();
-        User_web user_web = userRepository.getUserByUserName (name);
+        try{
+            String name = principal.getName();
+            User_web user_web = userRepository.getUserByUserName (name);
 
-        Post_web post_web;
-        User_web user_web1;
+            if (!this.postRepository.existPostById(shared_post_web.getPost_id())){
+                throw new Exception_General("Post Id no Exist");
+            }
 
-        try {
-            post_web = postRepository.getPostById(shared_post_web.getPost_id());
-        } catch (EmptyResultDataAccessException e) {
+            Post_web post_web = this.postRepository.getPostById(shared_post_web.getPost_id());
+
+            //user is owner?
+            if (!post_web.getOwner().getUsername().equals(user_web.getUsername())){
+                throw new Exception_General("User is not Owner");
+            }
+
+            //Check username exists
+            if (!this.userRepository.existUserByUsername(shared_post_web.getUsername())){
+                throw new Exception_General("User not Exist");
+            }
+
+            User_web user_web1 = this.userRepository.getUserByUserName(shared_post_web.getUsername());
+
+            if (!this.userRepository.existRelationFriend(user_web, user_web1)){
+                throw new Exception_General("No exist relationship");
+            }
+
+            if (this.postRepository.existPostShared(user_web1, post_web)){
+                throw new Exception_General("Post is already shared");
+            }
+
+            this.postRepository.addShare(shared_post_web);
+
             return "redirect:/getPosts";
+        }catch (Exception e){
+            throw new Exception_General("Error Sharing Posts: " + e);
         }
 
-        //user is owner?
-        if (!post_web.getOwner().getUsername().equals(user_web.getUsername())){
-            return "redirect:/getPosts";
-        }
-
-        //Check username exists
-       try {
-           user_web1 = this.userRepository.getUserByUserName(shared_post_web.getUsername());
-       } catch (EmptyResultDataAccessException e) {
-           return "redirect:/getPosts";
-       }
-
-       if (!this.userRepository.existRelationFriend(user_web, user_web1)){
-           return "error";
-       }
-
-       if (this.postRepository.existPostShared(user_web1, post_web)){
-           return "redirect:/getPosts";
-       }
-
-       this.postRepository.addShare(shared_post_web);
-
-
-        return "redirect:/getPosts";
     }
 
 

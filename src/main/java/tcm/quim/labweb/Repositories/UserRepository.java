@@ -28,6 +28,8 @@ public class UserRepository {
     private final String QUERY_MY_FRIEND = "SELECT * FROM friend_web WHERE username1 = ?";
     private final String QUERY_RELATION_FRIEND = "SELECT * FROM friend_web WHERE username1 = ? AND username2 = ?";
     private final String QUERY_RELATION_FRIEND_EXIST = "SELECT COUNT (*) FROM friend_web WHERE username1 = ? AND username2 = ?";
+    private final String QUERY_USER_EXIST = "SELECT COUNT (*) FROM user_web WHERE username1";
+
 
 
     public UserRepository(JdbcTemplate jdbcTemplate) {
@@ -100,6 +102,21 @@ public class UserRepository {
 
         return result;
     }
+
+    public Boolean existUserByUsername (String username){
+
+        Boolean result = false;
+
+        int count = jdbcTemplate.queryForObject(QUERY_USER_EXIST, new Object[] { username }, Integer.class);
+
+        if (count > 0) {
+            result = true;
+        }
+
+        return result;
+    }
+
+
 
     private final class FriendUserWebMapper implements RowMapper<Friend_web> {
         @Override

@@ -111,9 +111,7 @@ public class PostRepository {
         jdbcTemplate.update(DELETE_SHARED_POST, shared_post_web.getPost_user_id());
     }
 
-    public boolean existPostById(String id) {
-
-        int idToUse = Integer.parseInt(id);
+    public boolean existPostById(int idToUse) {
 
         Boolean result = false;
 
