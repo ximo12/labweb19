@@ -21,6 +21,12 @@ public class Shared_Post_web {
     public Shared_Post_web() {
     }
 
+    public Shared_Post_web(int post_user_id, String username, int post_id) {
+        this.post_user_id = post_user_id;
+        this.username = username;
+        this.post_id = post_id;
+    }
+
     public int getPost_user_id() {
         return post_user_id;
     }

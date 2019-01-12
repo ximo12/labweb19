@@ -135,15 +135,7 @@ public class WebControllerPost {
             String name = principal.getName();
             User_web user_web = userRepository.getUserByUserName (name);
 
-            List<Post_web> post_webList = postRepository.getAllPostsSharedWithUser(user_web);
-
-            List<Post_web> post_web_OwnerList = postRepository.getMyPosts(user_web);
-
-            for (Post_web post_web: post_web_OwnerList) {
-                if (!this.compareIfPostIsInArray(post_webList, post_web)){
-                    post_webList.add(post_web);
-                }
-            }
+            List<Post_web> post_webList = this.postRepository.getMyPosts(user_web);
 
             List<User_web> friend_webList = userRepository.getUsersThatImFriend(user_web);
 
@@ -165,18 +157,6 @@ public class WebControllerPost {
         }
 
     }
-
-    private boolean compareIfPostIsInArray(List<Post_web> post_webList, Post_web post_web) {
-
-        for (Post_web post1: post_webList) {
-            if (post1.getId() == post_web.getId()){
-                return true;
-            }
-        }
-        return false;
-
-    }
-
 
     @GetMapping("getMyPosts")
     public String getMyPosts(Model model, Principal principal) {
@@ -216,8 +196,53 @@ public class WebControllerPost {
     }
 
 
+    /*
+    DELETE POSTS
+    */
+    @GetMapping("deletePost")
+    public String deletePost(Model model) {
+        try{
+            model.addAttribute("post_delete", new Post_web());
+            return "postDeleteForm";
+        }catch (Exception e){
+            throw new Exception_General("Error Deleting Post: " + e);
+        }
+    }
 
-    //SHARE POSTS
+    @PostMapping("deletePost")
+    public String deletePost(Post_web post_web, Principal principal) {
+        try{
+            String name = principal.getName();
+            User_web user_web = userRepository.getUserByUserName (name);
+
+            if (!this.postRepository.existPostById(post_web.getId())){
+                throw new Exception_General("Post Id not Exist");
+            }
+
+            Post_web post_web_toUse = this.postRepository.getPostById(post_web.getId());
+
+            if (!this.isOwner(user_web, post_web_toUse)){
+                throw new Exception_General("User is not Owner");
+            }
+
+            if (this.postRepository.existPostShared(post_web)){
+                this.deleteAllPostsSharedByPost(post_web);
+            }
+
+            this.postRepository.deletePost(post_web);
+
+            return "redirect:/getPosts";
+        }catch (Exception e){
+            throw new Exception_General("Error Deleting Posts: " + e);
+        }
+
+    }
+
+
+
+    /*
+    SHARE POSTS
+    */
     @GetMapping("sharePost")
     public String sharePost(Model model) {
         try{
@@ -227,7 +252,6 @@ public class WebControllerPost {
             throw new Exception_General("Error Sharing Posts: " + e);
         }
     }
-
 
    @PostMapping("sharePost")
     public String sharePost(Shared_Post_web shared_post_web, Principal principal) {
@@ -258,7 +282,7 @@ public class WebControllerPost {
             }
 
             if (this.postRepository.existPostSharedUserPost(user_web1, post_web)){
-                throw new Exception_General("Post is already shared");
+                throw new Exception_General("Post is shared");
             }
 
             this.postRepository.addShare(shared_post_web);
@@ -270,48 +294,66 @@ public class WebControllerPost {
 
     }
 
-    /*
-    DELETE POSTS
-    */
-    @GetMapping("deletePost")
-    public String deletePost(Model model) {
+    @GetMapping("deleteSharePost")
+    public String deleteSharePost(Model model) {
         try{
-            model.addAttribute("post_delete", new Shared_Post_web());
-            return "postDeleteForm";
+            model.addAttribute("share_post_delete", new Shared_Post_web());
+            return "sharePostDeleteForm";
         }catch (Exception e){
             throw new Exception_General("Error Deleting Post: " + e);
         }
     }
 
-    @PostMapping("deletePost")
-    public String deletePost(Post_web post_web, Principal principal) {
+    @PostMapping("deleteSharePost")
+    public String deleteSharePost(Shared_Post_web shared_post_web, Principal principal) {
         try{
             String name = principal.getName();
             User_web user_web = userRepository.getUserByUserName (name);
 
-            if (!this.postRepository.existPostById(post_web.getId())){
-                throw new Exception_General("Post Id no Exist");
+            if (!this.postRepository.existPostById(shared_post_web.getPost_id())){
+                throw new Exception_General("Post Id not Exist");
             }
 
-            Post_web post_web_toUse = this.postRepository.getPostById(post_web.getId());
+            if (!this.userRepository.existUserByUsername(shared_post_web.getUsername())) {
+                throw new Exception_General("Post Id not Exist");
+            }
 
-            if (!this.isOwner(user_web, post_web_toUse)){
+            Post_web post_web = this.postRepository.getPostById(shared_post_web.getPost_id());
+
+            User_web user_web1 = this.userRepository.getUserByUserName(shared_post_web.getUsername());
+
+            if (!this.isOwner(user_web, post_web)){
                 throw new Exception_General("User is not Owner");
             }
 
-            if (this.postRepository.existPostShared(post_web)){
-                this.deleteAllPostsSharedByPost(post_web);
+            if (!this.postRepository.existPostSharedUserPost(user_web1, post_web)){
+                throw new Exception_General("Shared Post no exist");
             }
 
-            this.postRepository.deletePost(post_web);
+            Shared_Post_web shared_post_web1 = this.postRepository.getSharedPostWeb(user_web1, post_web);
+
+            this.postRepository.deleteSharedPostWeb(shared_post_web1);
 
             return "redirect:/getPosts";
         }catch (Exception e){
-            throw new Exception_General("Error Sharing Posts: " + e);
+            throw new Exception_General("Error Deleting Shared Posts: " + e);
         }
 
     }
 
+
+
+
+    private boolean compareIfPostIsInArray(List<Post_web> post_webList, Post_web post_web) {
+
+        for (Post_web post1: post_webList) {
+            if (post1.getId() == post_web.getId()){
+                return true;
+            }
+        }
+        return false;
+
+    }
 
     private Boolean isOwner (User_web user_web, Post_web post_web){
         if (post_web.getOwner().getUsername().equals(user_web.getUsername())){

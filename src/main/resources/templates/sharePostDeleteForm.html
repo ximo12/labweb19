@@ -3,25 +3,18 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Share Post</title>
+    <title>Delete Share Post</title>
 </head>
 <body>
 
 <div align="center">
 
-    <h1>Share Post</h1>
+    <h1>Delete Share Post</h1>
 
-    <form method="POST" th:object="${post_share}">
-        <div align = "left" class="errors" th:if="${#fields.hasErrors('*')}">
-            <ul>
-                <li th:each="err : ${#fields.errors('*')}"
-                    th:text="${err}">Input is incorrect</li>
-            </ul>
-        </div>
-
+    <form method="POST" th:object="${share_post_delete}">
         <table>
             <tr>
-                <td><label>PostId</label>:</td>
+                <td><label>Post Id</label>:</td>
                 <td><input type="text" th:field="*{post_id}"/></td>
             </tr>
             <tr>
@@ -30,7 +23,7 @@
             </tr>
         </table>
 
-        <input type="submit" value="Share Post" />
+        <input type="submit" value="Delete Share Post" />
 
     </form>
 </div>

@@ -28,7 +28,9 @@ public class UserRepository {
     private final String QUERY_MY_FRIEND = "SELECT * FROM friend_web WHERE username1 = ?";
     private final String QUERY_RELATION_FRIEND = "SELECT * FROM friend_web WHERE username1 = ? AND username2 = ?";
     private final String QUERY_RELATION_FRIEND_EXIST = "SELECT COUNT (*) FROM friend_web WHERE username1 = ? AND username2 = ?";
-    private final String QUERY_USER_EXIST = "SELECT COUNT (*) FROM user_web WHERE username1";
+    private final String QUERY_USER_EXIST = "SELECT COUNT (*) FROM user_web WHERE username = ?";
+
+    private final String DELETE_FRIEND = "DELETE FROM friend_web WHERE id = ?";
 
 
 
@@ -116,6 +118,9 @@ public class UserRepository {
         return result;
     }
 
+    public void deleteFriend(Friend_web friend_web) {
+        jdbcTemplate.update(DELETE_FRIEND, friend_web.getId());
+    }
 
 
     private final class FriendUserWebMapper implements RowMapper<Friend_web> {

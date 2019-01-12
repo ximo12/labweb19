@@ -37,10 +37,10 @@ public class PostRepository {
     private final String QUERY_ALL_OWNER_POSTS_USER = "SELECT * FROM post_web WHERE owner = ?";
     private final String QUERY_SHARED_POST = "SELECT * FROM shared_post WHERE username = ? AND post_id = ?";
     private final String QUERY_SHARED_POST_BY_POST = "SELECT * FROM shared_post WHERE post_id = ?";
-
-
     private final String DELETE_SHARED_POST = "DELETE FROM shared_post WHERE post_user_id = ?";
-    private final String DELETE_POST = "DELETE FROM post_web WHERE post_id = ?";
+
+
+    private final String DELETE_POST = "DELETE FROM post_web WHERE id = ?";
 
 
 
@@ -144,7 +144,7 @@ public class PostRepository {
     }
 
     public void deletePost(Post_web post_web) {
-
+        jdbcTemplate.update(DELETE_POST, post_web.getId());
     }
 
     public Boolean existPostShared(Post_web post_web) {
@@ -160,7 +160,7 @@ public class PostRepository {
     }
 
     public List<Shared_Post_web> getAllSharedPostByPost(Post_web post_web) {
-        List<Shared_Post_web> shared_post_webs = jdbcTemplate.query(QUERY_ALL_SHARED_POSTS_USER, new SharedPostWebLabMapper(), post_web.getId());
+        List<Shared_Post_web> shared_post_webs = jdbcTemplate.query(QUERY_SHARED_POST_BY_POST, new SharedPostWebLabMapper(), post_web.getId());
         return  shared_post_webs;
     }
 
@@ -168,7 +168,7 @@ public class PostRepository {
     private final class SharedPostWebLabMapper implements RowMapper<Shared_Post_web> {
         @Override
         public Shared_Post_web mapRow(ResultSet resultSet, int i) throws SQLException {
-            Shared_Post_web shared_post_web = new Shared_Post_web(resultSet.getString("username"), resultSet.getInt("post_id"));
+            Shared_Post_web shared_post_web = new Shared_Post_web(resultSet.getInt("post_user_id"), resultSet.getString("username"), resultSet.getInt("post_id"));
             return shared_post_web;
         }
     }

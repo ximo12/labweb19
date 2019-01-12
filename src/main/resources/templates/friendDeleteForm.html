@@ -3,23 +3,23 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Delete Post</title>
+    <title>Delete Friend</title>
 </head>
 <body>
 
 <div align="center">
 
-    <h1>Delete Post</h1>
+    <h1>Delete Friend</h1>
 
-    <form method="POST" th:object="${post_delete}">
+    <form method="POST" th:object="${friend_delete}">
         <table>
             <tr>
-                <td><label>PostId</label>:</td>
-                <td><input type="text" th:field="*{id}"/></td>
+                <td><label>Username</label>:</td>
+                <td><input type="text" th:field="*{username2}"/></td>
             </tr>
         </table>
 
-        <input type="submit" value="Delete Post" />
+        <input type="submit" value="Delete Friend" />
 
     </form>
 </div>
