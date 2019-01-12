@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create New Post</title>
+</head>
+<body>
+
+<div align="center">
+
+    <h1>New Post</h1>
+
+    <form method="POST" th:object="${post_delete}">
+        <table>
+            <tr>
+                <td><label>PostId</label>:</td>
+                <td><input type="text" th:field="*{post_id}"/></td>
+            </tr>
+        </table>
+
+        <input type="submit" value="Delete Post" />
+
+    </form>
+</div>
+
+</body>
+</html>

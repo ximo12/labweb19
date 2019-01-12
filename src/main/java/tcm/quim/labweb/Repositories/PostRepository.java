@@ -29,13 +29,19 @@ public class PostRepository {
     private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
     private final String QUERY_BY_ID_COUNT = "SELECT COUNT (*) FROM post_web WHERE id = ?";
     private final String QUERY_SHARED_EXIST = "SELECT COUNT (*) FROM shared_post WHERE username = ? AND post_id = ?";
+    private final String QUERY_EXIST_POST_SHARED = "SELECT COUNT (*) FROM shared_post WHERE post_id = ?";
+
 
 
     private final String QUERY_ALL_SHARED_POSTS_USER = "SELECT * FROM shared_post WHERE username = ?";
     private final String QUERY_ALL_OWNER_POSTS_USER = "SELECT * FROM post_web WHERE owner = ?";
     private final String QUERY_SHARED_POST = "SELECT * FROM shared_post WHERE username = ? AND post_id = ?";
+    private final String QUERY_SHARED_POST_BY_POST = "SELECT * FROM shared_post WHERE post_id = ?";
+
 
     private final String DELETE_SHARED_POST = "DELETE FROM shared_post WHERE post_user_id = ?";
+    private final String DELETE_POST = "DELETE FROM post_web WHERE post_id = ?";
+
 
 
 
@@ -125,7 +131,7 @@ public class PostRepository {
 
     }
 
-    public boolean existPostShared(User_web user_web, Post_web post_web) {
+    public boolean existPostSharedUserPost(User_web user_web, Post_web post_web) {
         Boolean result = false;
 
         int count = jdbcTemplate.queryForObject(QUERY_SHARED_EXIST, new Object[] { user_web.getUsername(), post_web.getId() }, Integer.class);
@@ -135,6 +141,27 @@ public class PostRepository {
         }
 
         return result;
+    }
+
+    public void deletePost(Post_web post_web) {
+
+    }
+
+    public Boolean existPostShared(Post_web post_web) {
+        Boolean result = false;
+
+        int count = jdbcTemplate.queryForObject(QUERY_EXIST_POST_SHARED, new Object[] {post_web.getId() }, Integer.class);
+
+        if (count > 0) {
+            result = true;
+        }
+
+        return result;
+    }
+
+    public List<Shared_Post_web> getAllSharedPostByPost(Post_web post_web) {
+        List<Shared_Post_web> shared_post_webs = jdbcTemplate.query(QUERY_ALL_SHARED_POSTS_USER, new SharedPostWebLabMapper(), post_web.getId());
+        return  shared_post_webs;
     }
 
 

@@ -1,6 +1,5 @@
 package tcm.quim.labweb.Controller;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.ui.Model;
@@ -78,10 +77,8 @@ public class WebControllerPost {
 
             Post_web post_web = this.postRepository.getPostById(id);
 
-            User_web user_web_owner = post_web.getOwner();
-
-            if (!user_web.getUsername().equals(user_web_owner.getUsername())){
-                if (!this.userCanEdit(user_web, user_web_owner, post_web)){
+            if (!this.isOwner(user_web, post_web)){
+                if (!this.userCanEdit(user_web, post_web)){
                     throw new Exception_General("You can't edit Post");
                 }
             }
@@ -95,13 +92,15 @@ public class WebControllerPost {
 
     }
 
-    private Boolean userCanEdit (User_web user_web, User_web user_web_owner, Post_web post_web){
+    private Boolean userCanEdit (User_web user_web, Post_web post_web){
+
+        User_web user_web_owner = this.userRepository.getUserByUserName(post_web.getOwner().getUsername());
 
         if (!this.userRepository.existRelationFriend(user_web_owner, user_web)){
             return false;
         }
 
-        if (!this.postRepository.existPostShared(user_web, post_web)){
+        if (!this.postRepository.existPostSharedUserPost(user_web, post_web)){
             return false;
         }
 
@@ -203,7 +202,7 @@ public class WebControllerPost {
 
             Post_web post_web = this.postRepository.getPostById(id);
 
-            if (!post_web.getOwner().getUsername().equals(user_web.getUsername())){
+            if (!this.isOwner(user_web, post_web)){
                 if (!this.userRepository.existRelationFriend(post_web.getOwner(), user_web)){
                     throw new Exception_General("User can view this Post");
                 }
@@ -243,7 +242,7 @@ public class WebControllerPost {
             Post_web post_web = this.postRepository.getPostById(shared_post_web.getPost_id());
 
             //user is owner?
-            if (!post_web.getOwner().getUsername().equals(user_web.getUsername())){
+            if (!this.isOwner(user_web, post_web)){
                 throw new Exception_General("User is not Owner");
             }
 
@@ -258,7 +257,7 @@ public class WebControllerPost {
                 throw new Exception_General("No exist relationship");
             }
 
-            if (this.postRepository.existPostShared(user_web1, post_web)){
+            if (this.postRepository.existPostSharedUserPost(user_web1, post_web)){
                 throw new Exception_General("Post is already shared");
             }
 
@@ -270,6 +269,67 @@ public class WebControllerPost {
         }
 
     }
+
+    /*
+    DELETE POSTS
+    */
+    @GetMapping("deletePost")
+    public String deletePost(Model model) {
+        try{
+            model.addAttribute("post_delete", new Shared_Post_web());
+            return "postDeleteForm";
+        }catch (Exception e){
+            throw new Exception_General("Error Deleting Post: " + e);
+        }
+    }
+
+    @PostMapping("deletePost")
+    public String deletePost(Post_web post_web, Principal principal) {
+        try{
+            String name = principal.getName();
+            User_web user_web = userRepository.getUserByUserName (name);
+
+            if (!this.postRepository.existPostById(post_web.getId())){
+                throw new Exception_General("Post Id no Exist");
+            }
+
+            Post_web post_web_toUse = this.postRepository.getPostById(post_web.getId());
+
+            if (!this.isOwner(user_web, post_web_toUse)){
+                throw new Exception_General("User is not Owner");
+            }
+
+            if (this.postRepository.existPostShared(post_web)){
+                this.deleteAllPostsSharedByPost(post_web);
+            }
+
+            this.postRepository.deletePost(post_web);
+
+            return "redirect:/getPosts";
+        }catch (Exception e){
+            throw new Exception_General("Error Sharing Posts: " + e);
+        }
+
+    }
+
+
+    private Boolean isOwner (User_web user_web, Post_web post_web){
+        if (post_web.getOwner().getUsername().equals(user_web.getUsername())){
+            return true;
+        }
+        return false;
+    }
+
+    private void deleteAllPostsSharedByPost (Post_web post_web){
+        List<Shared_Post_web> shared_post_webs = this.postRepository.getAllSharedPostByPost(post_web);
+
+        for (Shared_Post_web shared_post_web: shared_post_webs) {
+            this.postRepository.deleteSharedPostWeb(shared_post_web);
+        }
+
+    }
+
+
 
 
 
