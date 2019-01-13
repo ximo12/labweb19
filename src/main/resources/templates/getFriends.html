@@ -19,6 +19,51 @@
         <div th:text="${#temporals.format(User_Web.date_birth, 'dd-MM-yyyy HH:mm')}" />
     </div>
 
+    <div align="center">
+        <a>Choose an option</a>
+
+        <form action="/getPosts">
+            <input type="submit" value="View All Posts" />
+        </form>
+
+        <form action="/getMyPosts">
+            <input type="submit" value="View My Posts" />
+        </form>
+
+        <form action="/newPost">
+            <input type="submit" value="Create New Post" />
+        </form>
+
+        <form action="/getMyFriends">
+            <input type="submit" value="View My Friends" />
+        </form>
+
+        <form action="/getUsersThatImFriend">
+            <input type="submit" value="View Users That I'm Friend" />
+        </form>
+
+        <form action="/sharePost">
+            <input type="submit" value="Share Post" />
+        </form>
+
+        <form action="/deleteFriend">
+            <input type="submit" value="Delete Friend" />
+        </form>
+
+        <form action="/deletePost">
+            <input type="submit" value="Delete Post" />
+        </form>
+
+        <form action="/deleteSharePost">
+            <input type="submit" value="Delete Share Post" />
+        </form>
+
+        <form action="/editUser">
+            <input type="submit" value="Edit User" />
+        </form>
+
+    </div>
+
 </div>
 
 </body>

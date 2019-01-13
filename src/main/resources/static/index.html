@@ -1,31 +1,57 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
 </head>
 <body>
-<h1> Hello <span th:text="${User_web.name}"/></h1>
+<h1> Hello</h1>
 <h3> This is index page</h3>
 
-<a>Choose an option</a>
+<div align="center">
+    <a>Choose an option</a>
 
-<form action="/getPosts">
-    <input type="submit" value="View All Posts" />
-</form>
+    <form action="/getPosts">
+        <input type="submit" value="View All Posts" />
+    </form>
 
-<form action="/getMyPosts">
-    <input type="submit" value="View My Posts" />
-</form>
+    <form action="/getMyPosts">
+        <input type="submit" value="View My Posts" />
+    </form>
 
-<form action="/getMyFriends">
-    <input type="submit" value="View My Friends" />
-</form>
+    <form action="/newPost">
+        <input type="submit" value="Create New Post" />
+    </form>
 
-<form action="/getUsersThatImFriend">
-    <input type="submit" value="View Users That I'm Friend" />
-</form>
+    <form action="/getMyFriends">
+        <input type="submit" value="View My Friends" />
+    </form>
+
+    <form action="/getUsersThatImFriend">
+        <input type="submit" value="View Users That I'm Friend" />
+    </form>
+
+    <form action="/sharePost">
+        <input type="submit" value="Share Post" />
+    </form>
+
+    <form action="/deleteFriend">
+        <input type="submit" value="Delete Friend" />
+    </form>
+
+    <form action="/deletePost">
+        <input type="submit" value="Delete Post" />
+    </form>
+
+    <form action="/deleteSharePost">
+        <input type="submit" value="Delete Share Post" />
+    </form>
+
+    <form action="/editUser">
+        <input type="submit" value="Edit User" />
+    </form>
+
+</div>
 
 </body>
 </html>

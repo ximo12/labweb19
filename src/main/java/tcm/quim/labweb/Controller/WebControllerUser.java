@@ -30,7 +30,14 @@ public class WebControllerUser {
         this.postRepository = postRepository;
     }
 
-
+    @GetMapping("index")
+    public String index() {
+        try{
+            return "redirect:/index";
+        }catch (Exception e){
+            throw new Exception_General("Error general" + e);
+        }
+    }
 
     /*
     EDIT
