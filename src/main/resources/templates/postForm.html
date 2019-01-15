@@ -28,6 +28,10 @@
                 <td><label>Text</label>:</td>
                 <td><input type="text" th:field="*{text}"/></td>
             </tr>
+            <tr>
+                <td><label>Public</label>:</td>
+                <td><<input type="checkbox" name="active" th:checked="*{is_public}" /></td>
+            </tr>
         </table>
 
         <input type="submit" value="Create Post" />

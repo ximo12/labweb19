@@ -29,7 +29,7 @@ public class BaseSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/addFriend").hasRole("USER")
                 .antMatchers("/deleteFriend").hasRole("USER")
 
-                
+
                 .anyRequest().authenticated()
                 .and()
             .formLogin() //to use forms (web)

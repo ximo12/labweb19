@@ -24,12 +24,10 @@ public class Post_web {
 
     private User_web owner;
 
-    private List user_share;
 
     public Post_web() {
         this.date_create = LocalDateTime.now();
         this.date_edit = LocalDateTime.now();
-        this.user_share = new ArrayList<User_web>();
     }
 
     public Post_web(int id, @NotNull(message = "Title cannot be null") @Size(min = 4, max = 100, message = "Title must be between 4 an 100 characters long") String title, @NotNull(message = "Text cannot be null") @Size(min = 4, max = 5000, message = "Title must be between 4 an 5000 characters long") String text, Boolean is_public, LocalDateTime date_create, LocalDateTime date_edit, User_web owner) {
@@ -94,35 +92,6 @@ public class Post_web {
 
     public void setDate_edit(LocalDateTime date_edit) {
         this.date_edit = date_edit;
-    }
-
-    public void setIs_public(Boolean is_public) {
-        this.is_public = is_public;
-        this.setDate_editNow();
-    }
-
-    public List getUser_share() {
-        return user_share;
-    }
-
-    public void addUser_share(User_web user_share) {
-        if (!this.user_share.contains(user_share)){
-            this.user_share.add(user_share);
-            this.setDate_editNow();
-        }
-
-    }
-
-    public void setOwner(User_web owner) {
-        this.owner = owner;
-    }
-
-    public void removeUser_share(User_web user_share) {
-        if (this.user_share.contains(user_share)){
-            this.user_share.remove(user_share);
-            this.setDate_editNow();
-        }
-
     }
 
 

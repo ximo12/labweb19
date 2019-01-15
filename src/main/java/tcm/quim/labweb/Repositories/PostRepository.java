@@ -35,6 +35,7 @@ public class PostRepository {
 
     private final String QUERY_ALL_SHARED_POSTS_USER = "SELECT * FROM shared_post WHERE username = ?";
     private final String QUERY_ALL_OWNER_POSTS_USER = "SELECT * FROM post_web WHERE owner = ?";
+    private final String QUERY_ALL_OWNER_POSTS_USER_PUBLIC = "SELECT * FROM post_web WHERE owner = ? AND is_public = ?";
     private final String QUERY_SHARED_POST = "SELECT * FROM shared_post WHERE username = ? AND post_id = ?";
     private final String QUERY_SHARED_POST_BY_POST = "SELECT * FROM shared_post WHERE post_id = ?";
     private final String DELETE_SHARED_POST = "DELETE FROM shared_post WHERE post_user_id = ?";
@@ -89,6 +90,12 @@ public class PostRepository {
     public List<Post_web>  getMyPosts(User_web user_web) {
         return jdbcTemplate.query(QUERY_ALL_OWNER_POSTS_USER, new Object[]{user_web.getUsername()}, mapper);
     }
+
+    public List<Post_web>  getMyPostsForOtherUser(User_web user_web) {
+        return jdbcTemplate.query(QUERY_ALL_OWNER_POSTS_USER, new Object[]{user_web.getUsername(), true}, mapper);
+    }
+
+
 
 
 
