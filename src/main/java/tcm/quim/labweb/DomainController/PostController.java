@@ -119,6 +119,10 @@ public class PostController {
 
     private Boolean userCanEdit (User_web user_web, Post_web post_web){
 
+        if (!post_web.getIs_public()){
+            return false;
+        }
+
         User_web user_web_owner = this.userRepository.getUserByUserName(post_web.getOwner().getUsername());
 
         if (!this.userRepository.existRelationFriend(user_web_owner, user_web)){
