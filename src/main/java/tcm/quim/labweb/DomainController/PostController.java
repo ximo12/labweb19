@@ -71,7 +71,7 @@ public class PostController {
 
         //FOR ALL USERS, GET POSTS
         for (User_web user_web1: friend_webList) {
-            List<Post_web> post_webList1 = postRepository.getMyPosts(user_web1);
+            List<Post_web> post_webList1 = postRepository.getMyPostsForOtherUser(user_web1);
             post_webList.addAll(post_webList1);
         }
         return post_webList;
@@ -100,20 +100,6 @@ public class PostController {
         return post_web;
     }
 
-
-
-
-
-    private boolean compareIfPostIsInArray(List<Post_web> post_webList, Post_web post_web) {
-
-        for (Post_web post1: post_webList) {
-            if (post1.getId() == post_web.getId()){
-                return true;
-            }
-        }
-        return false;
-
-    }
 
     private Boolean isOwner (User_web user_web, Post_web post_web){
         if (post_web.getOwner().getUsername().equals(user_web.getUsername())){

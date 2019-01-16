@@ -23,7 +23,7 @@ public class PostRepository {
     private final String INSERT_POST = "INSERT INTO post_web (title, text, is_public, date_create, date_edit, owner) VALUES (?, ? , ?, ?, ?, ?)";
     private final String INSERT_SHARED = "INSERT INTO shared_post (username, post_id) VALUES (?, ?)";
 
-    private final String SAVE_POST = "UPDATE post_web SET title = ?, text = ?, date_edit = ? WHERE id = ?";
+    private final String SAVE_POST = "UPDATE post_web SET title = ?, text = ?, is_public = ?, date_edit = ? WHERE id = ?";
 
 
     private final String QUERY_BY_ID = "SELECT * FROM post_web WHERE id = ?";
@@ -60,7 +60,7 @@ public class PostRepository {
 
 
     public int savePost(Post_web post_web) {
-        return jdbcTemplate.update(SAVE_POST, post_web.getTitle(), post_web.getText(), post_web.getDate_edit(), post_web.getId());
+        return jdbcTemplate.update(SAVE_POST, post_web.getTitle(), post_web.getText(), post_web.getIs_public(), post_web.getDate_edit(), post_web.getId());
     }
 
     public int addNewPost(Post_web post_web, User_web owner) {
@@ -69,22 +69,6 @@ public class PostRepository {
     }
 
 
-    public List<Post_web> getAllPostsSharedWithUser(User_web user_web){
-        //List SHared_Post_Web contains lists relation username-postId
-        List<Shared_Post_web> shared_post_webs = jdbcTemplate.query(QUERY_ALL_SHARED_POSTS_USER, new SharedPostWebLabMapper(), user_web.getUsername());
-
-        //List all Posts
-        List<Post_web> post_shared_with_user = new ArrayList<>();
-
-        //Get List Share Posts
-        for (Shared_Post_web shared_post_web: shared_post_webs) {
-            int postId = shared_post_web.getPost_id();
-            Post_web post_web = this.getPostById(postId);
-            post_shared_with_user.add(post_web);
-        }
-
-        return post_shared_with_user;
-    }
 
 
     public List<Post_web>  getMyPosts(User_web user_web) {
@@ -92,11 +76,8 @@ public class PostRepository {
     }
 
     public List<Post_web>  getMyPostsForOtherUser(User_web user_web) {
-        return jdbcTemplate.query(QUERY_ALL_OWNER_POSTS_USER, new Object[]{user_web.getUsername(), true}, mapper);
+        return jdbcTemplate.query(QUERY_ALL_OWNER_POSTS_USER_PUBLIC, new Object[]{user_web.getUsername(), true}, mapper);
     }
-
-
-
 
 
     private RowMapper<Post_web> mapper = (resultSet, i) -> {

@@ -28,6 +28,7 @@ public class Post_web {
     public Post_web() {
         this.date_create = LocalDateTime.now();
         this.date_edit = LocalDateTime.now();
+        is_public = true;
     }
 
     public Post_web(int id, @NotNull(message = "Title cannot be null") @Size(min = 4, max = 100, message = "Title must be between 4 an 100 characters long") String title, @NotNull(message = "Text cannot be null") @Size(min = 4, max = 5000, message = "Title must be between 4 an 5000 characters long") String text, Boolean is_public, LocalDateTime date_create, LocalDateTime date_edit, User_web owner) {
@@ -60,6 +61,10 @@ public class Post_web {
     public void setText(String text) {
         this.text = text;
         this.setDate_editNow();
+    }
+
+    public void setIs_public(Boolean is_public) {
+        this.is_public = is_public;
     }
 
     public LocalDateTime getDate_create() {
